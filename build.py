@@ -394,7 +394,7 @@ def page(path, title, body, depth, active="", description="", og_image=None, fil
 <link rel="stylesheet" href="{up}css/style.css?v={ASSET_VERSION}">
 <script src="{up}js/site.js?v={ASSET_VERSION}" defer></script>
 </head>
-<body>
+<body id="top">
 <a class="skip" href="#main">Skip to content</a>
 {ticker}
 <header class="site-header">
@@ -443,6 +443,7 @@ def page(path, title, body, depth, active="", description="", og_image=None, fil
     <span>© {YEAR} Castle Bridge Media · {LOCATION}</span>
   </div>
 </footer>
+<a class="to-top" href="#top" aria-label="Back to top">↑</a>
 </body>
 </html>
 """

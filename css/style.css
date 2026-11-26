@@ -367,27 +367,38 @@ section.wrap > .guides { padding: 8px 0 56px; }
   body { font-size: 15.5px; }
   .lede { max-width: none; }
   :root { --merlon: 16px; }
-  .menu-toggle {
-    display: inline-flex; align-items: center; min-height: 40px; padding: 0 14px;
-    font: 500 12px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink);
-    background: var(--card); border: 2px solid var(--ink); cursor: pointer;
+  /* header: brand on top, menu as a row you swipe left/right */
+  .menu-toggle { display: none; }
+  .header-inner { flex-wrap: wrap; gap: 0; }
+  .site-nav {
+    order: 2; flex: 0 0 calc(100% + var(--gutter) * 2); margin: 0 calc(var(--gutter) * -1);
+    display: flex; gap: 4px; overflow-x: auto; scroll-snap-type: x proximity; scroll-padding-inline: var(--gutter);
+    padding: 0 var(--gutter); border-top: 1px solid var(--rule);
+    scrollbar-width: none; -webkit-overflow-scrolling: touch;
+    -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent); mask-image: linear-gradient(90deg, #000 85%, transparent);
   }
-  .site-nav { display: none; }
-  .menu-open .site-nav {
-    display: flex; flex-direction: column;
-    position: absolute; left: 0; right: 0; top: 100%;
-    padding: 8px var(--gutter) 20px; background: var(--paper); border-bottom: 2px solid var(--ink);
-  }
-  .menu-open .site-nav a { font-size: 15px; padding: 14px 0; border-bottom: 1px solid var(--rule); }
-  .header-inner { min-height: 68px; }
+  .site-nav::-webkit-scrollbar { display: none; }
+  .site-nav a { flex: none; scroll-snap-align: start; padding: 13px 12px 11px; font-size: 13px; }
+  .site-nav a:first-child { padding-left: 0; }
+  .site-nav a:last-child { margin-right: 40px; }
+  .header-inner { min-height: 0; padding-top: 12px; }
+  .brand { padding-bottom: 10px; }
   .brand img { width: 40px; }
   .brand span { font-size: 22px; }
   .episode { grid-template-columns: 84px minmax(0, 1fr); gap: 16px; }
   .ep-thumb { width: 84px; box-shadow: 3px 3px 0 var(--ink); }
   .ticker .wrap { min-height: 32px; font-size: 12px; }
-  .hero-grid { grid-template-columns: 1fr; }
-  .hero-copy { padding-bottom: 8px; }
-  .cover-wall { height: 300px; transform: rotate(3deg); margin: 0 calc(var(--gutter) * -1); grid-template-columns: repeat(3, 1fr); }
+  /* hero: the cover collage sits behind the headline, faded */
+  .hero { position: relative; padding: 0; }
+  .hero-grid { display: block; position: static; }
+  .hero-copy { position: relative; z-index: 1; padding: 64px 0 56px; }
+  .cover-wall {
+    position: absolute; inset: 0; z-index: 0; height: auto; margin: 0;
+    transform: rotate(4deg) scale(1.25); opacity: .16; pointer-events: none;
+    -webkit-mask-image: none; mask-image: none;
+  }
+  .hero::after { content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+    background: linear-gradient(180deg, rgba(244,239,230,.55), rgba(244,239,230,.15) 40%, rgba(244,239,230,.6)); }
   .chapter-head { grid-template-columns: 1fr; gap: 6px; }
   .book-grid, .book-grid.shelf { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 36px 16px; }
   .book-grid.shelf .book-card:nth-child(-n+4) { display: block; }
@@ -438,3 +449,15 @@ mark { background: var(--pulp); color: var(--ink); padding: 0 2px; }
 
 /* long links (podcast descriptions, book blurbs) wrap instead of widening the page on phones */
 .show p, .episode-summary, .prose, .bio, .press a { overflow-wrap: anywhere; }
+
+/* ---------- back-to-top arrow (phones) */
+.to-top {
+  position: fixed; right: 16px; bottom: 20px; z-index: 20;
+  width: 46px; height: 46px; display: grid; place-items: center;
+  background: var(--ink); color: var(--paper); border: 2px solid var(--ink);
+  box-shadow: 3px 3px 0 var(--blood); font: 400 22px/1 var(--display); text-decoration: none;
+  opacity: 0; transform: translateY(12px); pointer-events: none; transition: opacity .2s, transform .2s;
+}
+.to-top.show { opacity: 1; transform: none; pointer-events: auto; }
+.to-top:hover { color: var(--pulp); }
+@media (min-width: 761px) { .to-top { display: none; } }
