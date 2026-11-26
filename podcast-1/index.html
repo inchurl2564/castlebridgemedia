@@ -14,8 +14,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Gloock&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../css/style.css?v=9e6cf714">
-<script src="../js/site.js?v=9e6cf714" defer></script>
+<link rel="stylesheet" href="../css/style.css?v=d2f241cd">
+<script src="../js/site.js?v=d2f241cd" defer></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -33,13 +33,6 @@
 <main id="main">
 <header class="page-head wrap"><p class="label">Podcasts</p><h1>Podcasts</h1><p class="lede">We produce podcasts about entertainment and the people who create it: conversations for fans who want to go deeper into what they watch, read and play.</p></header>
 <section class="wrap">
-  <div class="ep-search" id="ep-search">
-    <label for="ep-q"><h2>Search the archive</h2></label>
-    <p class="meta">Find any of our 1,000 episodes by movie, show, book, author, director, star or guest.</p>
-    <input id="ep-q" type="search" placeholder="Try “Hammer”, “John Carpenter” or “Dark Shadows”" autocomplete="off" data-index="episodes.json">
-    <p id="ep-status" class="meta" aria-live="polite"></p>
-    <ul class="episodes" id="ep-results" hidden></ul>
-  </div>
   <div class="show" id="show-card">
     <img class="show-art" src="https://d3wo5wojvuv7l.cloudfront.net/t_rss_itunes_square_1400/images.spreaker.com/original/5603466dbe27024b332f7809d5f276d2.jpg" alt="Castle of Horror Podcast artwork" width="240" height="240">
     <div>
@@ -51,6 +44,12 @@
         <a class="button ghost" href="https://www.spreaker.com/show/4268760/episodes/feed" target="_blank" rel="noopener">RSS feed</a>
       </p>
     </div>
+  </div>
+  <div class="ep-search" id="ep-search">
+    <label for="ep-q" class="ep-search-label">Search all 1,000 episodes by movie, show, book, author, director, star or guest</label>
+    <input id="ep-q" type="search" placeholder="Try “Hammer”, “John Carpenter” or “Dark Shadows”" autocomplete="off" data-index="episodes.json">
+    <p id="ep-status" class="meta" aria-live="polite"></p>
+    <ul class="episodes" id="ep-results" hidden></ul>
   </div>
   <div id="ep-latest">
     <div class="section-head"><h2>Latest episodes</h2><span class="meta">1,000 episodes since 2013</span></div>

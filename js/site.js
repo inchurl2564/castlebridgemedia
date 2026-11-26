@@ -78,7 +78,6 @@
   var status = document.getElementById('ep-status');
   var results = document.getElementById('ep-results');
   var latest = document.getElementById('ep-latest');
-  var showCard = document.getElementById('show-card');
   var data = null, loading = null, timer = null;
 
   var norm = function (s) {
@@ -124,7 +123,7 @@
     var q = input.value.trim();
     var terms = norm(q).split(/\s+/).filter(function (t) { return t.length > 1; });
     if (!terms.length) {
-      results.hidden = true; latest.hidden = false; if (showCard) showCard.hidden = false; status.textContent = '';
+      results.hidden = true; latest.hidden = false; status.textContent = '';
       if (history.replaceState) history.replaceState(null, '', location.pathname);
       return;
     }
@@ -157,7 +156,7 @@
         (r.l ? ' <a href="' + escapeHtml(r.l) + '" target="_blank" rel="noopener">Episode page</a>' : '') +
         '</p></div></li>';
     }).join('');
-    results.hidden = false; latest.hidden = true; if (showCard) showCard.hidden = true;
+    results.hidden = false; latest.hidden = true;
     if (history.replaceState) history.replaceState(null, '', '?q=' + encodeURIComponent(q));
   };
 

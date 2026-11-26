@@ -597,13 +597,6 @@ def build():
     total = show["count"] if show else 0
     body = page_head("Podcasts", "Podcasts", esc(PILLARS[1][2])) + f"""
 <section class="wrap">
-  <div class="ep-search" id="ep-search">
-    <label for="ep-q"><h2>Search the archive</h2></label>
-    <p class="meta">Find any of our {total:,} episodes by movie, show, book, author, director, star or guest.</p>
-    <input id="ep-q" type="search" placeholder="Try “Hammer”, “John Carpenter” or “Dark Shadows”" autocomplete="off" data-index="episodes.json">
-    <p id="ep-status" class="meta" aria-live="polite"></p>
-    <ul class="episodes" id="ep-results" hidden></ul>
-  </div>
   <div class="show" id="show-card">
     {art}
     <div>
@@ -615,6 +608,12 @@ def build():
         <a class="button ghost" href="{PODCAST_FEED}" target="_blank" rel="noopener">RSS feed</a>
       </p>
     </div>
+  </div>
+  <div class="ep-search" id="ep-search">
+    <label for="ep-q" class="ep-search-label">Search all {total:,} episodes by movie, show, book, author, director, star or guest</label>
+    <input id="ep-q" type="search" placeholder="Try “Hammer”, “John Carpenter” or “Dark Shadows”" autocomplete="off" data-index="episodes.json">
+    <p id="ep-status" class="meta" aria-live="polite"></p>
+    <ul class="episodes" id="ep-results" hidden></ul>
   </div>
   <div id="ep-latest">
     <div class="section-head"><h2>Latest episodes</h2><span class="meta">{total:,} episodes since 2013</span></div>
