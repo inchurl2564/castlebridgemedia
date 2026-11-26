@@ -565,19 +565,19 @@ def build():
 
     # ---- Books (catalog)
     counts = {g: sum(1 for x in catalog if g in x.get("genres", [])) for g in GENRES}
-    filters = ('<div class="filters" role="group" aria-label="Filter by genre">'
-               '<button type="button" data-filter="all" aria-pressed="true">All <span>%d</span></button>' % len(catalog)
-               + "".join('<button type="button" data-filter="%s" aria-pressed="false">%s <span>%d</span></button>'
-                         % (genre_slug(g), esc(g), counts[g]) for g in GENRES if counts[g])
-               + '</div>')
+    genre_select = ('<label class="genre-select"><span class="visually-hidden">Genre</span><select id="genre">'
+                    '<option value="all">All genres</option>'
+                    + "".join('<option value="%s">%s (%d)</option>' % (genre_slug(g), esc(g), counts[g])
+                              for g in GENRES if counts[g])
+                    + '</select></label>')
     body = page_head("Our books", "Publishing", esc(PILLARS[0][2]), books_subnav("../", "All books")) + f"""
 <section class="wrap catalog">
   <div class="toolbar">
     <label class="search"><span class="visually-hidden">Search books</span>
       <input id="q" type="search" placeholder="Search by title or author" autocomplete="off"></label>
-    {filters}
+    {genre_select}
+    <p id="count" class="meta" aria-live="polite">{len(catalog)} books</p>
   </div>
-  <p id="count" class="meta" aria-live="polite">{len(catalog)} books</p>
   {grid(catalog, "../", "catalog-grid", eager=8, castling=castling_slugs)}
   <p id="empty" class="empty" hidden>No books match that search.</p>
 </section>"""
