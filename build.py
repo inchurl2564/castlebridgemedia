@@ -245,6 +245,19 @@ YEAR = __import__("datetime").date.today().year
 NOW_PLAYING = ""  # latest podcast episode title, set in build()
 
 
+def _asset_version():
+    """Short fingerprint of the CSS and JS, so browsers fetch new copies after a change."""
+    import hashlib
+    h = hashlib.sha1()
+    for f in ("css/style.css", "js/site.js"):
+        with open(os.path.join(ROOT, f), "rb") as fh:
+            h.update(fh.read())
+    return h.hexdigest()[:8]
+
+
+ASSET_VERSION = _asset_version()
+
+
 # ---------------------------------------------------------------- layout
 def page(path, title, body, depth, active="", description="", og_image=None, filename="index.html"):
     # depth=None means root-absolute links (for 404.html, served at any path).
@@ -279,8 +292,8 @@ def page(path, title, body, depth, active="", description="", og_image=None, fil
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Gloock&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{up}css/style.css">
-<script src="{up}js/site.js" defer></script>
+<link rel="stylesheet" href="{up}css/style.css?v={ASSET_VERSION}">
+<script src="{up}js/site.js?v={ASSET_VERSION}" defer></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
