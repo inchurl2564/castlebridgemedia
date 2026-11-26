@@ -373,9 +373,12 @@ def episode_html(e, heading="h3"):
             % (heading, esc(e["title"]), heading, esc(meta), audio, esc(e["summary"]), more))
 
 
-def project_card(p):
+def project_card(p, up=""):
     host = re.sub(r"^https?://(www\.)?", "", p["url"]).rstrip("/")
-    img = ('<img src="%s" alt="" loading="lazy">' % esc(p["image"])) if p.get("image") else ""
+    src = p.get("image") or ""
+    if src and not src.startswith("http"):
+        src = up + src
+    img = ('<img src="%s" alt="" loading="lazy" width="1200" height="630">' % esc(src)) if src else ""
     desc = '<p>%s</p>' % esc(p["description"]) if p.get("description") else ""
     return ('<li class="project-card"><a href="%s" target="_blank" rel="noopener">%s'
             '<span class="project-host">%s</span><h3>%s</h3>%s<span class="arrow">Visit site →</span></a></li>'
@@ -520,7 +523,7 @@ def build():
 
     # ---- Data
     if projects:
-        proj = '<ul class="project-grid">%s</ul>' % "".join(project_card(p) for p in projects)
+        proj = '<ul class="project-grid">%s</ul>' % "".join(project_card(p, "../") for p in projects)
     else:
         proj = '<p class="empty">Our first data sites are on the way.</p>'
     body = page_head("Data", "Data sites", esc(PILLARS[2][2])) + f"""
