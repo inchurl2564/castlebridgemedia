@@ -524,7 +524,7 @@ def build():
                '<button type="button" data-filter="all" aria-pressed="true">All</button>'
                '<button type="button" data-filter="cbm" aria-pressed="false">Adult fiction &amp; nonfiction</button>'
                '<button type="button" data-filter="castling" aria-pressed="false">Young readers</button></div>')
-    body = page_head("Publishing", "Books", esc(PILLARS[0][2]), books_subnav("../", "All books")) + f"""
+    body = page_head("Our books", "Publishing", esc(PILLARS[0][2]), books_subnav("../", "All books")) + f"""
 <section class="wrap catalog">
   <div class="toolbar">
     <label class="search"><span class="visually-hidden">Search books</span>
@@ -535,7 +535,7 @@ def build():
   {grid(catalog, "../", "catalog-grid", eager=8, castling=castling_slugs)}
   <p id="empty" class="empty" hidden>No books match that search.</p>
 </section>"""
-    page("catalog", "Books", body, 1, "Publishing")
+    page("catalog", "Publishing", body, 1, "Publishing")
 
     # ---- Castling Books
     castling = [by_slug[s] for s in site["castling"] if s in by_slug]
