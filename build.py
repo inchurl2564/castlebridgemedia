@@ -327,8 +327,8 @@ PILLARS = [
      "what audiences are discovering, rediscovering and talking about, and why. Our sites gather public "
      "data, turn it into clear, sourced stories, and keep themselves up to date every day.", "See our data sites"),
 ]
-GUIDES = ("We're curious about why stories last. We show our sources, and we make things for readers, "
-          "listeners and fans first, and for the writers, journalists and companies who work alongside them.")
+GUIDES = ("We're curious about why stories last. We champion our authors, give our guests room to talk, "
+          "and show our sources. Everything we make is for readers, listeners and fans first.")
 
 YEAR = __import__("datetime").date.today().year
 # Genre filters on the Publishing page, in display order. Each book's genres live in data/books.json.
