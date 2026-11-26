@@ -402,8 +402,14 @@ def books_subnav(up, active):
         '<a href="%s%s"%s>%s</a>' % (up, h, ' aria-current="page"' if l == active else "", l) for l, h in items)
 
 
+def badge_text(b):
+    """Only pre-order notices are shown as a sticker; "On Sale Now" ribbons from the old site are dropped."""
+    r = (b.get("ribbon") or "").strip()
+    return r.rstrip("!") if "pre" in r.lower() else ""
+
+
 def book_card(b, up, eager=False):
-    ribbon = '<span class="badge">%s</span>' % esc(b["ribbon"].rstrip("!")) if b["ribbon"] else ""
+    ribbon = '<span class="badge">%s</span>' % esc(badge_text(b)) if badge_text(b) else ""
     return (
         '<li class="book-card" data-genres="%s"><a href="%sproduct-page/%s/">'
         '<span class="cover"><img src="%s%s" alt="" loading="%s" width="400" height="600">%s</span>'
@@ -464,7 +470,10 @@ def build():
     catalog = [by_slug[s] for s in order if s in by_slug]
 
     # ---- Home
-    wall_books = featured + [x for x in catalog if x not in featured]
+    # Cover collage: leave out the publishers' own titles.
+    def by_publishers(x):
+        return bool(re.search(r"In Churl Yo|Henderson", x["author"]))
+    wall_books = [x for x in featured + [y for y in catalog if y not in featured] if not by_publishers(x)]
     wall_cols = ["", "", ""]
     for i, wb in enumerate(wall_books[:15]):
         wall_cols[i % 3] += '<a href="product-page/%s/" tabindex="-1"><img src="%s" alt="" width="400" height="600"%s></a>' % (
@@ -746,7 +755,7 @@ def build():
         for name, slug, sep in b["authors"]:
             names.append('<a href="%sauthors/#%s">%s</a>' % (up, slug, esc(name)) if slug else esc(name))
         byline = '<p class="byline">by %s</p>' % "".join(names) if b["author"] else ""
-        badge = '<span class="badge static">%s</span>' % esc(b["ribbon"].rstrip("!")) if b["ribbon"] else ""
+        badge = '<span class="badge static">%s</span>' % esc(badge_text(b)) if badge_text(b) else ""
         label = "Pre-order on Amazon" if "pre" in b["ribbon"].lower() else "Buy on Amazon"
         buttons = ""
         if b["buy"]:
