@@ -20,6 +20,8 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 DATA = os.path.join(ROOT, "data")
 
 SITE_NAME = "Castle Bridge Media"
+# Public address of the site, used for link previews (Messages, social media). Change when the domain moves.
+SITE_URL = "https://inchurl2564.github.io/castlebridgemedia/"
 EMAIL = "castlebridgemedia@gmail.com"
 LOCATION = "Denver, Colorado"
 QUERY_URL = "https://querymanager.com/query/castlebridgemedia"
@@ -365,7 +367,9 @@ def page(path, title, body, depth, active="", description="", og_image=None, fil
     )
     full_title = esc(title + " · " + SITE_NAME if title != SITE_NAME else SITE_NAME + " · Stories, data and the people who love them")
     meta_desc = esc(description or TAGLINE)
-    og = '<meta property="og:image" content="%s%s">' % (up, og_image) if og_image else ""
+    og_img = SITE_URL + (og_image or "images/og-image.png")
+    og = ('<meta property="og:image" content="%s">\n<meta property="og:url" content="%s">\n'
+          '<meta name="twitter:card" content="summary_large_image">' % (og_img, SITE_URL + (path + "/" if path else "")))
     ticker = ""
     if NOW_PLAYING:
         ticker = ('<div class="ticker"><div class="wrap"><span class="ticker-label">On the air</span>'
@@ -382,7 +386,9 @@ def page(path, title, body, depth, active="", description="", og_image=None, fil
 <meta property="og:site_name" content="{SITE_NAME}">
 {og}
 <meta name="theme-color" content="#16130f">
-<link rel="icon" href="{up}images/favicon.png">
+<link rel="icon" href="{up}images/favicon.png" sizes="32x32">
+<link rel="icon" href="{up}images/icon-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="{up}images/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Gloock&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
@@ -395,7 +401,7 @@ def page(path, title, body, depth, active="", description="", og_image=None, fil
 <header class="site-header">
   <div class="wrap header-inner">
     <a class="brand" href="{up}">
-      <img src="{up}images/logo.png" alt="" width="52" height="49">
+      <img src="{up}images/logo.png" alt="" width="44" height="54">
       <span>Castle Bridge Media</span>
     </a>
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
@@ -408,7 +414,7 @@ def page(path, title, body, depth, active="", description="", og_image=None, fil
 <footer class="site-footer">
   <div class="wrap footer-grid">
     <div class="footer-brand">
-      <a class="brand" href="{up}"><img src="{up}images/logo.png" alt="" width="52" height="49"><span>Castle Bridge Media</span></a>
+      <a class="brand" href="{up}"><img src="{up}images/logo.png" alt="" width="44" height="54"><span>Castle Bridge Media</span></a>
       <p>{esc(TAGLINE)}</p>
     </div>
     <div>
@@ -618,7 +624,7 @@ def build():
     <a class="text-link" href="about/">More about us →</a>
   </div>
 </section>"""
-    page("", SITE_NAME, body, 0, "", og_image="images/logo.png")
+    page("", SITE_NAME, body, 0, "")
 
     # ---- Books (catalog)
     counts = {g: sum(1 for x in catalog if g in x.get("genres", [])) for g in GENRES}
@@ -811,7 +817,10 @@ def build():
         if b["buy"]:
             buttons += '<a class="button" href="%s" target="_blank" rel="noopener">%s</a>' % (esc(b["buy"]), label)
         if b["sample"]:
-            buttons += '<a class="button ghost" href="%s" target="_blank" rel="noopener">Read a sample</a>' % esc(b["sample"])
+            # On phones Amazon's web sample reader is unreliable, so site.js sends phones to the book's
+            # Amazon page instead, where Amazon's own "Read sample" button works in the app and mobile site.
+            buttons += ('<a class="button ghost sample-link" href="%s" data-mobile-href="%s" target="_blank" rel="noopener">Read a sample</a>'
+                        % (esc(b["sample"]), esc(b["buy"] or b["sample"])))
         note = '<p class="note">%s</p>' % esc(b["note"]) if b["note"] else ""
         imprint = ('<p class="meta">A <a href="%scastling-books/">Castling Books</a> title for young readers</p>' % up
                    if b["slug"] in castling_slugs else "")

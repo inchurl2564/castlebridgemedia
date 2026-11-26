@@ -157,3 +157,14 @@
   var initial = new URLSearchParams(location.search).get('q');
   if (initial) { input.value = initial; render(); }
 })();
+
+// "Read a sample": phones go to the Amazon book page (its sample button works there); computers open the Kindle reader.
+(function () {
+  var phone = window.matchMedia && window.matchMedia('(pointer: coarse)').matches ||
+    /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if (!phone) return;
+  document.querySelectorAll('a.sample-link[data-mobile-href]').forEach(function (a) {
+    a.href = a.getAttribute('data-mobile-href');
+    a.textContent = 'Read a sample on Amazon';
+  });
+})();
