@@ -654,7 +654,7 @@ def build():
         if L not in [x[0] for x in letters]:
             letters.append((L, a["slug"]))
     index = "".join('<a href="#%s">%s</a>' % (slug, L) for L, slug in letters)
-    body = page_head("Publishing", "Authors", "The %d writers, editors and artists who publish with us." % len(authors),
+    body = page_head("Publishing", "Authors", "The writers, editors and artists who publish with us.",
                      books_subnav("../", "Authors")) + f"""
 <section class="wrap">
   <nav class="alpha" aria-label="Authors by surname">{index}</nav>
