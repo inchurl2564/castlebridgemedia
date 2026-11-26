@@ -443,7 +443,7 @@ def page(path, title, body, depth, active="", description="", og_image=None, fil
     <span>© {YEAR} Castle Bridge Media · {LOCATION}</span>
   </div>
 </footer>
-<a class="to-top" href="#top" aria-label="Back to top">↑</a>
+<a class="to-top" href="#top" aria-label="Back to top"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M9 15V3M3.5 8.5 9 3l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
 </body>
 </html>
 """
