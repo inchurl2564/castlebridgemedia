@@ -26,7 +26,6 @@ QUERY_URL = "https://querymanager.com/query/castlebridgemedia"
 SOCIAL = [
     ("Amazon", "https://www.amazon.com/s?k=Castle+Bridge+Media&i=digital-text&ref=nb_sb_noss_2"),
     ("Facebook", "https://www.facebook.com/castlebridgemedia/"),
-    ("Twitter / X", "https://twitter.com/castlebridgemed"),
 ]
 NAV = [
     ("Books", "catalog/"),
