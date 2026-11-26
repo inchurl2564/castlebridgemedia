@@ -243,6 +243,7 @@ GUIDES = ("We're curious about why stories last. We show our sources, and we mak
           "listeners and fans first, and for the writers, journalists and companies who work alongside them.")
 
 YEAR = __import__("datetime").date.today().year
+NOW_PLAYING = ""  # latest podcast episode title, set in build()
 
 
 # ---------------------------------------------------------------- layout
@@ -259,6 +260,10 @@ def page(path, title, body, depth, active="", description="", og_image=None, fil
     full_title = esc(title + " · " + SITE_NAME if title != SITE_NAME else SITE_NAME + " · Stories, data and the people who love them")
     meta_desc = esc(description or TAGLINE)
     og = '<meta property="og:image" content="%s%s">' % (up, og_image) if og_image else ""
+    ticker = ""
+    if NOW_PLAYING:
+        ticker = ('<div class="ticker"><div class="wrap"><span class="ticker-label">On the air</span>'
+                  '<a href="%spodcast-1/">%s</a></div></div>' % (up, esc(NOW_PLAYING)))
     doc = f"""<!doctype html>
 <html lang="en">
 <head>
@@ -270,16 +275,17 @@ def page(path, title, body, depth, active="", description="", og_image=None, fil
 <meta property="og:description" content="{meta_desc}">
 <meta property="og:site_name" content="{SITE_NAME}">
 {og}
-<meta name="theme-color" content="#f8f5ef">
+<meta name="theme-color" content="#16130f">
 <link rel="icon" href="{up}images/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Gloock&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{up}css/style.css">
 <script src="{up}js/site.js" defer></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
+{ticker}
 <header class="site-header">
   <div class="wrap header-inner">
     <a class="brand" href="{up}">
@@ -337,7 +343,7 @@ def page(path, title, body, depth, active="", description="", og_image=None, fil
 
 def page_head(eyebrow, title, lede="", extra=""):
     lede_html = '<p class="lede">%s</p>' % lede if lede else ""
-    return ('<header class="page-head wrap"><p class="eyebrow">%s</p><h1>%s</h1>%s%s</header>'
+    return ('<header class="page-head wrap"><p class="label">%s</p><h1>%s</h1>%s%s</header>'
             % (esc(eyebrow), esc(title), lede_html, extra))
 
 
@@ -395,6 +401,9 @@ def build():
     by_slug = {b["slug"]: b for b in books}
     castling_slugs = set(site["castling"])
     show = fetch_podcast()
+    global NOW_PLAYING
+    if show and show["episodes"]:
+        NOW_PLAYING = "Castle of Horror Podcast: " + show["episodes"][0]["title"]
 
     books_by_author = {}
     for b in books:
@@ -408,57 +417,90 @@ def build():
     catalog = [by_slug[s] for s in order if s in by_slug]
 
     # ---- Home
-    pillars = "".join(
-        '<li class="pillar"><span class="pillar-num">0%d</span><h3>%s</h3><p>%s</p>'
-        '<a class="text-link" href="%s">%s →</a></li>' % (i + 1, esc(t), esc(d), href, esc(cta))
-        for i, (t, href, d, cta) in enumerate(PILLARS))
+    wall_books = featured + [x for x in catalog if x not in featured]
+    wall_cols = ["", "", ""]
+    for i, wb in enumerate(wall_books[:15]):
+        wall_cols[i % 3] += '<a href="product-page/%s/" tabindex="-1"><img src="%s" alt="" width="400" height="600"%s></a>' % (
+            wb["slug"], wb["cover"], "" if i < 6 else ' loading="lazy"')
+    wall = "".join('<div class="wall-col">%s</div>' % c for c in wall_cols)
+    total_eps = show["count"] if show else 0
+    stats = [("%d" % len(catalog), "books in print"), ("%d" % len(authors), "authors"),
+             ("%s" % format(total_eps, ","), "podcast episodes since 2013"),
+             ("Daily", "data updates")]
+    stats_html = "".join('<li><strong>%s</strong> %s</li>' % (esc(n), esc(l)) for n, l in stats)
     latest = ""
     if show and show["episodes"]:
         e = show["episodes"][0]
-        art = ('<img class="show-art" src="%s" alt="%s artwork" width="200" height="200" loading="lazy">'
+        art = ('<img class="show-art" src="%s" alt="%s artwork" width="220" height="220" loading="lazy">'
                % (esc(show["image"]), esc(show["title"]))) if show.get("image") else ""
         latest = f"""
-<section class="band band-alt">
-  <div class="wrap">
-    <div class="section-head"><h2>Latest episode</h2><a class="text-link" href="podcast-1/">All episodes →</a></div>
-    <div class="latest">
+    <div class="on-air">
       {art}
-      <div><p class="eyebrow">{esc(show["title"])}</p>{episode_html(e)}</div>
-    </div>
-  </div>
-</section>"""
-    data_band = ""
+      <div><p class="label">On the air · {esc(show["title"])}</p>{episode_html(e)}</div>
+    </div>"""
+    rally = ""
     if projects:
-        data_band = f"""
-<section class="band">
-  <div class="wrap">
-    <div class="section-head"><h2>From our data sites</h2><a class="text-link" href="data/">About our data work →</a></div>
-    <ul class="project-grid">{"".join(project_card(p) for p in projects)}</ul>
-  </div>
-</section>"""
+        p0 = projects[0]
+        img = ('<img src="%s" alt="" width="1200" height="630" loading="lazy">' % esc(p0["image"])) if p0.get("image") else ""
+        rally = f"""
+    <a class="feature-project" href="{esc(p0["url"])}" target="_blank" rel="noopener">
+      {img}
+      <div>
+        <p class="label">Now live · {esc(re.sub(r"^https?://(www\.)?", "", p0["url"]).rstrip("/"))}</p>
+        <h3>{esc(p0["name"])}</h3>
+        <p>{esc(p0.get("description", ""))}</p>
+        <span class="arrow">Read today's comebacks →</span>
+      </div>
+    </a>"""
     body = f"""
 <section class="hero">
-  <div class="wrap">
-    <p class="eyebrow">Castle Bridge Media</p>
-    <h1>Stories, data and the people who love them.</h1>
-    <p class="lede">{esc(TAGLINE)} We publish books, produce podcasts and build data sites about culture and entertainment.</p>
-    <p class="actions"><a class="button" href="catalog/">Browse our books</a><a class="button ghost" href="podcast-1/">Listen to the podcast</a></p>
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <p class="label">Independent · Denver, Colorado</p>
+      <h1>Stories, data and the people who <em>love</em> them.</h1>
+      <p class="lede">{esc(TAGLINE)}</p>
+      <p class="actions"><a class="button" href="catalog/">Browse the books</a><a class="button ghost" href="podcast-1/">Hear the podcast</a></p>
+    </div>
+    <div class="cover-wall" aria-hidden="true">{wall}</div>
   </div>
 </section>
-<section class="band band-tight">
-  <div class="wrap"><ul class="pillars">{pillars}</ul></div>
-</section>
-<section class="band">
+<section class="stats"><ul class="wrap">{stats_html}</ul></section>
+
+<section class="band chapter">
   <div class="wrap">
-    <div class="section-head"><h2>New &amp; notable</h2><a class="text-link" href="catalog/">All {len(catalog)} books →</a></div>
+    <div class="chapter-head">
+      <p class="chapter-num">I.</p>
+      <div><h2>Publishing</h2><p class="lede">{esc(PILLARS[0][2])}</p></div>
+    </div>
     {grid(featured, "", "shelf", eager=5, castling=castling_slugs)}
+    <p><a class="text-link" href="catalog/">See all {len(catalog)} books →</a> &nbsp; <a class="text-link" href="submissions/">Send us yours →</a></p>
   </div>
 </section>
-{latest}
-{data_band}
-<section class="band">
-  <div class="wrap guides">
-    <p class="eyebrow">What guides us</p>
+
+<section class="band chapter dark battlements">
+  <div class="wrap">
+    <div class="chapter-head">
+      <p class="chapter-num">II.</p>
+      <div><h2>Podcasts</h2><p class="lede">{esc(PILLARS[1][2])}</p></div>
+    </div>
+    {latest}
+    <p><a class="text-link" href="podcast-1/">All {total_eps:,} episodes →</a></p>
+  </div>
+</section>
+
+<section class="band chapter pulp">
+  <div class="wrap">
+    <div class="chapter-head">
+      <p class="chapter-num">III.</p>
+      <div><h2>Data</h2><p class="lede">{esc(PILLARS[2][2])}</p></div>
+    </div>
+    {rally}
+  </div>
+</section>
+
+<section class="band creed">
+  <div class="wrap">
+    <p class="label">What guides us</p>
     <blockquote>{esc(GUIDES)}</blockquote>
     <a class="text-link" href="about/">More about us →</a>
   </div>
@@ -505,7 +547,7 @@ def build():
   <div class="show">
     {art}
     <div>
-      <p class="eyebrow">Our show</p>
+      <p class="label">Our show</p>
       <h2>{esc(show["title"]) if show else "Castle of Horror Podcast"}</h2>
       <p>{linkify(esc(show["description"])) if show else ""}</p>
       <p class="actions">
@@ -615,7 +657,7 @@ def build():
 <section class="wrap">
   <div class="principles">{what}</div>
   <div class="guides">
-    <p class="eyebrow">What guides us</p>
+    <p class="label">What guides us</p>
     <blockquote>{esc(GUIDES)}</blockquote>
   </div>
   <div class="two-col">
