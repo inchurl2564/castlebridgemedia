@@ -234,7 +234,7 @@ p { margin: 0 0 1em; }
 .catalog #count { margin-bottom: 30px; }
 .catalog, .imprint { padding-bottom: 88px; }
 .empty { font-style: italic; color: var(--muted); padding: 24px 0; }
-.imprint-logo { width: 240px; margin-bottom: 44px; border: 2px solid var(--ink); }
+.imprint-logo { width: 240px; height: auto; margin-bottom: 44px; }
 
 /* ---------- product */
 .product { padding-top: 28px; padding-bottom: 80px; }

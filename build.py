@@ -551,7 +551,7 @@ def build():
                      "Castling Books is the Castle Bridge Media imprint for juvenile and young adult fiction.",
                      books_subnav("../", "Castling Books")) + f"""
 <section class="wrap imprint">
-  <img class="imprint-logo" src="../images/castling-logo.jpg" alt="Castling Books logo" width="400" height="280">
+  <img class="imprint-logo" src="../images/castling-logo.png" alt="Castling Books logo" width="509" height="527">
   {grid(castling, "../", eager=6)}
 </section>"""
     page("castling-books", "Castling Books", body, 1, "Publishing",
