@@ -28,8 +28,7 @@ SOCIAL = [
     ("Facebook", "https://www.facebook.com/castlebridgemedia/"),
 ]
 NAV = [
-    ("Books", "catalog/"),
-    ("Authors", "authors/"),
+    ("Publishing", "catalog/"),
     ("Podcasts", "podcast-1/"),
     ("Data", "data/"),
     ("About", "about/"),
@@ -536,7 +535,7 @@ def build():
   {grid(catalog, "../", "catalog-grid", eager=8, castling=castling_slugs)}
   <p id="empty" class="empty" hidden>No books match that search.</p>
 </section>"""
-    page("catalog", "Books", body, 1, "Books")
+    page("catalog", "Books", body, 1, "Publishing")
 
     # ---- Castling Books
     castling = [by_slug[s] for s in site["castling"] if s in by_slug]
@@ -547,7 +546,7 @@ def build():
   <img class="imprint-logo" src="../images/castling-logo.jpg" alt="Castling Books logo" width="400" height="280">
   {grid(castling, "../", eager=6)}
 </section>"""
-    page("castling-books", "Castling Books", body, 1, "Books",
+    page("castling-books", "Castling Books", body, 1, "Publishing",
          description="Castling Books is the juvenile and young adult fiction imprint of Castle Bridge Media.")
 
     # ---- Podcasts
@@ -634,7 +633,7 @@ def build():
     </ul>
   </aside>
 </section>"""
-    page("submissions", "Submissions", body, 1, "Books",
+    page("submissions", "Submissions", body, 1, "Publishing",
          description="How to submit your manuscript to Castle Bridge Media.")
 
     # ---- Authors
@@ -661,7 +660,7 @@ def build():
   <nav class="alpha" aria-label="Authors by surname">{index}</nav>
   <ul class="author-grid">{"".join(cards)}</ul>
 </section>"""
-    page("authors", "Authors", body, 1, "Authors", description="The authors of Castle Bridge Media.")
+    page("authors", "Authors", body, 1, "Publishing", description="The authors of Castle Bridge Media.")
 
     # ---- About
     press = "".join(
@@ -736,7 +735,7 @@ def build():
   </div>
 </section>"""
         plain_desc = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", html.unescape(b["body"]))).strip()
-        page("product-page/" + b["slug"], b["name"], body, 2, "Books",
+        page("product-page/" + b["slug"], b["name"], body, 2, "Publishing",
              description=plain_desc[:155], og_image=b["cover"])
 
     # ---- 404 page (GitHub Pages / Netlify serve /404.html)
