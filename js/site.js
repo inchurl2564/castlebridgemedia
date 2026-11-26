@@ -11,7 +11,7 @@
     });
   }
 
-  // Catalog search + imprint filter
+  // Catalog search + genre filter (also reads #genre from the address, e.g. catalog/#horror)
   var q = document.getElementById('q');
   var cards = document.querySelectorAll('.catalog-grid .book-card');
   if (q && cards.length) {
@@ -22,22 +22,35 @@
     var apply = function () {
       var t = q.value.trim().toLowerCase(), n = 0;
       cards.forEach(function (c) {
+        var genres = (c.getAttribute('data-genres') || '').split(' ');
         var hit = c.textContent.toLowerCase().indexOf(t) !== -1 &&
-          (filter === 'all' || c.getAttribute('data-imprint') === filter);
+          (filter === 'all' || genres.indexOf(filter) !== -1);
         c.hidden = !hit;
         if (hit) n++;
       });
       count.textContent = n + (n === 1 ? ' book' : ' books');
       empty.hidden = n !== 0;
     };
+    var select = function (f, updateHash) {
+      var found = false;
+      buttons.forEach(function (x) {
+        var on = x.getAttribute('data-filter') === f;
+        if (on) found = true;
+        x.setAttribute('aria-pressed', String(on));
+      });
+      if (!found) { f = 'all'; buttons[0].setAttribute('aria-pressed', 'true'); }
+      filter = f;
+      if (updateHash && history.replaceState) {
+        history.replaceState(null, '', f === 'all' ? location.pathname + location.search : '#' + f);
+      }
+      apply();
+    };
     q.addEventListener('input', apply);
     buttons.forEach(function (b) {
-      b.addEventListener('click', function () {
-        filter = b.getAttribute('data-filter');
-        buttons.forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
-        apply();
-      });
+      b.addEventListener('click', function () { select(b.getAttribute('data-filter'), true); });
     });
+    if (location.hash.length > 1) select(location.hash.slice(1), false);
+    window.addEventListener('hashchange', function () { select(location.hash.slice(1) || 'all', false); });
   }
 
   // Author bios: collapse long ones behind "Read more"

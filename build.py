@@ -242,6 +242,13 @@ GUIDES = ("We're curious about why stories last. We show our sources, and we mak
           "listeners and fans first, and for the writers, journalists and companies who work alongside them.")
 
 YEAR = __import__("datetime").date.today().year
+# Genre filters on the Publishing page, in display order. Each book's genres live in data/books.json.
+GENRES = ["Horror", "Thrillers", "Mystery", "Fantasy", "Science Fiction", "Anthologies",
+          "Literary Fiction", "Film & Pop Culture", "Young Readers"]
+
+
+def genre_slug(g):
+    return re.sub(r"[^a-z0-9]+", "-", g.lower()).strip("-")
 NOW_PLAYING = ""  # latest podcast episode title, set in build()
 
 
@@ -366,20 +373,19 @@ def books_subnav(up, active):
         '<a href="%s%s"%s>%s</a>' % (up, h, ' aria-current="page"' if l == active else "", l) for l, h in items)
 
 
-def book_card(b, up, eager=False, imprint=""):
+def book_card(b, up, eager=False):
     ribbon = '<span class="badge">%s</span>' % esc(b["ribbon"].rstrip("!")) if b["ribbon"] else ""
     return (
-        '<li class="book-card"%s><a href="%sproduct-page/%s/">'
+        '<li class="book-card" data-genres="%s"><a href="%sproduct-page/%s/">'
         '<span class="cover"><img src="%s%s" alt="" loading="%s" width="400" height="600">%s</span>'
         '<span class="book-title">%s</span><span class="book-author">%s</span></a></li>'
-        % (' data-imprint="%s"' % imprint if imprint else "", up, b["slug"], up, b["cover"],
+        % (" ".join(genre_slug(g) for g in b.get("genres", [])), up, b["slug"], up, b["cover"],
            "eager" if eager else "lazy", ribbon, esc(b["title"]), esc(b["author"]))
     )
 
 
 def grid(books, up, extra_class="", eager=0, castling=()):
-    cards = "".join(book_card(b, up, i < eager, "castling" if b["slug"] in castling else "cbm")
-                    for i, b in enumerate(books))
+    cards = "".join(book_card(b, up, i < eager) for i, b in enumerate(books))
     return '<ul class="book-grid %s">%s</ul>' % (extra_class, cards)
 
 
@@ -520,10 +526,12 @@ def build():
     page("", SITE_NAME, body, 0, "", og_image="images/logo.png")
 
     # ---- Books (catalog)
-    filters = ('<div class="filters" role="group" aria-label="Filter books">'
-               '<button type="button" data-filter="all" aria-pressed="true">All</button>'
-               '<button type="button" data-filter="cbm" aria-pressed="false">Adult fiction &amp; nonfiction</button>'
-               '<button type="button" data-filter="castling" aria-pressed="false">Young readers</button></div>')
+    counts = {g: sum(1 for x in catalog if g in x.get("genres", [])) for g in GENRES}
+    filters = ('<div class="filters" role="group" aria-label="Filter by genre">'
+               '<button type="button" data-filter="all" aria-pressed="true">All <span>%d</span></button>' % len(catalog)
+               + "".join('<button type="button" data-filter="%s" aria-pressed="false">%s <span>%d</span></button>'
+                         % (genre_slug(g), esc(g), counts[g]) for g in GENRES if counts[g])
+               + '</div>')
     body = page_head("Our books", "Publishing", esc(PILLARS[0][2]), books_subnav("../", "All books")) + f"""
 <section class="wrap catalog">
   <div class="toolbar">
@@ -711,7 +719,13 @@ def build():
         note = '<p class="note">%s</p>' % esc(b["note"]) if b["note"] else ""
         imprint = ('<p class="meta">A <a href="%scastling-books/">Castling Books</a> title for young readers</p>' % up
                    if b["slug"] in castling_slugs else "")
-        related = [r for r in related_pool if r["slug"] != b["slug"]][:5]
+        tags = "".join('<a class="tag" href="%scatalog/#%s">%s</a>' % (up, genre_slug(g), esc(g))
+                       for g in b.get("genres", []))
+        tags = '<p class="tags">%s</p>' % tags if tags else ""
+        # related titles: ones sharing the most genres first
+        g0 = set(b.get("genres", []))
+        ranked = sorted(related_pool, key=lambda r: -len(g0 & set(r.get("genres", []))))
+        related = [r for r in ranked if r["slug"] != b["slug"]][:5]
         body = f"""
 <article class="wrap product">
   <nav class="crumbs" aria-label="Breadcrumb"><a href="{up}catalog/">Books</a> <span aria-hidden="true">/</span> {esc(b["title"])}</nav>
@@ -722,6 +736,7 @@ def build():
       <h1>{esc(b["title"])}</h1>
       {byline}
       {imprint}
+      {tags}
       {note}
       <div class="actions">{buttons}</div>
       <div class="prose">{b["body"]}</div>
