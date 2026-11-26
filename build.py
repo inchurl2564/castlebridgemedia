@@ -317,7 +317,7 @@ def fetch_podcast():
 TAGLINE = "Castle Bridge Media connects stories, data and the people who love them."
 PILLARS = [
     ("Publishing", "catalog/",
-     "We publish horror, mystery, fantasy and thriller fiction for adults and young readers, "
+     "We publish horror, mystery, fantasy and thriller fiction, as well as nonfiction, for adults and young readers, "
      "working closely with authors to find and grow their audiences.", "Browse the books"),
     ("Podcasts", "podcast-1/",
      "We produce podcasts about entertainment and the people who create it: conversations for fans "
