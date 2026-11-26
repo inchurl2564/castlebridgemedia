@@ -108,7 +108,7 @@ p { margin: 0 0 1em; }
 /* ---------- home: hero */
 .hero { padding: clamp(40px, 6vw, 72px) 0 0; overflow: hidden; }
 .hero-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: clamp(24px, 5vw, 64px); align-items: center; }
-.hero h1 { font-size: clamp(40px, 6vw, 80px); line-height: .98; letter-spacing: -0.02em; margin-bottom: 28px; }
+.hero h1 { font-size: clamp(40px, 6vw, 80px); line-height: .98; letter-spacing: -0.02em; margin-bottom: 36px; }
 .hero h1 em { font-style: normal; color: var(--blood); }
 .hero .lede { margin-bottom: 34px; }
 .hero-copy { padding-bottom: clamp(40px, 6vw, 72px); }
