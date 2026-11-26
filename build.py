@@ -367,7 +367,7 @@ def page(path, title, body, depth, active="", description="", og_image=None, fil
     )
     full_title = esc(title + " · " + SITE_NAME if title != SITE_NAME else SITE_NAME + " · Stories, data and the people who love them")
     meta_desc = esc(description or TAGLINE)
-    og_img = SITE_URL + (og_image or "images/og-image.png")
+    og_img = SITE_URL + (og_image or "images/logo.png")
     og = ('<meta property="og:image" content="%s">\n<meta property="og:url" content="%s">\n'
           '<meta name="twitter:card" content="summary_large_image">' % (og_img, SITE_URL + (path + "/" if path else "")))
     ticker = ""
@@ -386,9 +386,8 @@ def page(path, title, body, depth, active="", description="", og_image=None, fil
 <meta property="og:site_name" content="{SITE_NAME}">
 {og}
 <meta name="theme-color" content="#16130f">
-<link rel="icon" href="{up}images/favicon.png" sizes="32x32">
-<link rel="icon" href="{up}images/icon-192.png" sizes="192x192">
-<link rel="apple-touch-icon" href="{up}images/apple-touch-icon.png">
+<link rel="icon" href="{up}images/favicon.png">
+<link rel="apple-touch-icon" href="{up}images/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Gloock&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
@@ -401,7 +400,7 @@ def page(path, title, body, depth, active="", description="", og_image=None, fil
 <header class="site-header">
   <div class="wrap header-inner">
     <a class="brand" href="{up}">
-      <img src="{up}images/logo.png" alt="" width="44" height="54">
+      <img src="{up}images/logo.png" alt="" width="52" height="49">
       <span>Castle Bridge Media</span>
     </a>
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
@@ -414,7 +413,7 @@ def page(path, title, body, depth, active="", description="", og_image=None, fil
 <footer class="site-footer">
   <div class="wrap footer-grid">
     <div class="footer-brand">
-      <a class="brand" href="{up}"><img src="{up}images/logo.png" alt="" width="44" height="54"><span>Castle Bridge Media</span></a>
+      <a class="brand" href="{up}"><img src="{up}images/logo.png" alt="" width="52" height="49"><span>Castle Bridge Media</span></a>
       <p>{esc(TAGLINE)}</p>
     </div>
     <div>

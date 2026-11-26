@@ -85,7 +85,7 @@ p { margin: 0 0 1em; }
 .site-header { position: sticky; top: 0; z-index: 10; background: var(--paper); border-bottom: 2px solid var(--ink); }
 .header-inner { display: flex; align-items: center; justify-content: space-between; gap: 24px; min-height: 84px; }
 .brand { display: inline-flex; align-items: center; gap: 12px; color: var(--ink); text-decoration: none; }
-.brand img { width: 44px; height: auto; }
+.brand img { width: 52px; height: auto; }
 .brand span { font: 400 28px/1 var(--display); letter-spacing: -0.01em; }
 .brand:hover { color: var(--ink); }
 .site-nav { display: flex; gap: 2px; }
@@ -380,7 +380,7 @@ section.wrap > .guides { padding: 8px 0 56px; }
   }
   .menu-open .site-nav a { font-size: 15px; padding: 14px 0; border-bottom: 1px solid var(--rule); }
   .header-inner { min-height: 68px; }
-  .brand img { width: 34px; }
+  .brand img { width: 40px; }
   .brand span { font-size: 22px; }
   .episode { grid-template-columns: 84px minmax(0, 1fr); gap: 16px; }
   .ep-thumb { width: 84px; box-shadow: 3px 3px 0 var(--ink); }
