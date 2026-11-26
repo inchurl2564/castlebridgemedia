@@ -540,8 +540,9 @@ def build():
     wall_books = [x for x in featured + [y for y in catalog if y not in featured] if not by_publishers(x)]
     wall_cols = ["", "", ""]
     for i, wb in enumerate(wall_books[:15]):
-        wall_cols[i % 3] += '<a href="product-page/%s/" tabindex="-1"><img src="%s" alt="" width="400" height="600"%s></a>' % (
-            wb["slug"], wb["cover"], "" if i < 6 else ' loading="lazy"')
+        # all lazy: on phones the collage is hidden, so its covers are never downloaded there
+        wall_cols[i % 3] += '<a href="product-page/%s/" tabindex="-1"><img src="%s" alt="" width="400" height="600" loading="lazy"></a>' % (
+            wb["slug"], wb["cover"])
     wall = "".join('<div class="wall-col">%s</div>' % c for c in wall_cols)
     total_eps = show["count"] if show else 0
     stats = [("%d" % len(catalog), "books in print"), ("%d" % len(authors), "authors"),

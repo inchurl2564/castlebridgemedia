@@ -388,17 +388,20 @@ section.wrap > .guides { padding: 8px 0 56px; }
   .episode { grid-template-columns: 84px minmax(0, 1fr); gap: 16px; }
   .ep-thumb { width: 84px; box-shadow: 3px 3px 0 var(--ink); }
   .ticker .wrap { min-height: 32px; font-size: 12px; }
-  /* hero: the cover collage sits behind the headline, faded */
-  .hero { position: relative; padding: 0; }
-  .hero-grid { display: block; position: static; }
-  .hero-copy { position: relative; z-index: 1; padding: 64px 0 56px; }
-  .cover-wall {
-    position: absolute; inset: 0; z-index: 0; height: auto; margin: 0;
-    transform: rotate(4deg) scale(1.25); opacity: .16; pointer-events: none;
-    -webkit-mask-image: none; mask-image: none;
+  /* hero: solid ink block with a battlement edge; the cover collage is desktop-only */
+  .hero { position: relative; padding: 0; background: var(--ink); color: #f4efe6; margin-bottom: var(--merlon); overflow: visible; }
+  .hero::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: calc(var(--merlon) * -1 + 1px); height: var(--merlon);
+    background: linear-gradient(90deg, var(--ink) 50%, transparent 50%) 0 0 / calc(var(--merlon) * 2) 100% repeat-x;
   }
-  .hero::after { content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
-    background: linear-gradient(180deg, rgba(244,239,230,.55), rgba(244,239,230,.15) 40%, rgba(244,239,230,.6)); }
+  .hero-grid { display: block; }
+  .hero-copy { padding: 56px 0 52px; }
+  .hero h1 { color: #fff; }
+  .hero h1 em { color: #e5372f; }
+  .hero .label { color: var(--pulp); }
+  .hero .button { box-shadow: 4px 4px 0 #000; border-color: #000; }
+  .hero .button.ghost { background: var(--paper); }
+  .cover-wall { display: none; }
   .chapter-head { grid-template-columns: 1fr; gap: 6px; }
   .book-grid, .book-grid.shelf { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 36px 16px; }
   .book-grid.shelf .book-card:nth-child(-n+4) { display: block; }
