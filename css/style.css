@@ -388,14 +388,11 @@ section.wrap > .guides { padding: 8px 0 56px; }
   .episode { grid-template-columns: 84px minmax(0, 1fr); gap: 16px; }
   .ep-thumb { width: 84px; box-shadow: 3px 3px 0 var(--ink); }
   .ticker .wrap { min-height: 32px; font-size: 12px; }
-  /* hero: warm paper block with a red battlement edge; the cover collage is desktop-only */
-  .hero { position: relative; padding: 0; background: var(--paper-2); margin-bottom: var(--merlon); overflow: visible; }
-  .hero::after {
-    content: ""; position: absolute; left: 0; right: 0; bottom: calc(var(--merlon) * -1 + 1px); height: var(--merlon);
-    background: linear-gradient(90deg, var(--blood) 50%, transparent 50%) 0 0 / calc(var(--merlon) * 2) 100% repeat-x;
-  }
+  /* hero: the faded cover collage as one pre-rendered image (images/hero-collage.jpg, made by
+     tools/snapshot-collage.js), so phones don't download 15 covers. The live collage is desktop-only. */
+  .hero { position: relative; padding: 0; background: var(--paper) url("../images/hero-collage.jpg") center top / cover no-repeat; }
   .hero-grid { display: block; }
-  .hero-copy { padding: 56px 0 52px; }
+  .hero-copy { position: relative; padding: 64px 0 56px; }
   .hero .button.ghost { background: var(--card); }
   .cover-wall { display: none; }
   .chapter-head { grid-template-columns: 1fr; gap: 6px; }

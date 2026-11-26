@@ -345,7 +345,7 @@ def _asset_version():
     """Short fingerprint of the CSS and JS, so browsers fetch new copies after a change."""
     import hashlib
     h = hashlib.sha1()
-    for f in ("css/style.css", "js/site.js", "images/logo.png", "images/favicon.png"):
+    for f in ("css/style.css", "js/site.js", "images/logo.png", "images/favicon.png", "images/hero-collage.jpg"):
         with open(os.path.join(ROOT, f), "rb") as fh:
             h.update(fh.read())
     return h.hexdigest()[:8]

@@ -53,3 +53,16 @@ then open http://localhost:8000.
 Settings → Pages → Build and deployment → Deploy from a branch → `main` / root. To use
 castlebridgemedia.com, add it under Custom domain and update the domain's DNS records as GitHub
 describes.
+
+## Phone hero image
+
+On phones, the cover collage behind the home-page headline is a single pre-rendered image,
+`images/hero-collage.jpg` (about 40 KB), so phones don't download 15 covers. Computers show the live
+collage. If you change the featured books, regenerate it:
+
+```bash
+python3 build.py && python3 -m http.server 8765 &
+node tools/snapshot-collage.js
+```
+
+then convert `images/hero-collage.png` to JPEG (or ask Claude to).
