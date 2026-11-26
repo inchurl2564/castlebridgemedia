@@ -795,7 +795,7 @@ def build():
   <aside class="callout contact-box" id="contact">
     <h2>Contact us</h2>
     <p>Questions, partnerships or press: we'd love to hear from you.</p>
-    <a class="button" href="mailto:{EMAIL}">{EMAIL}</a>
+    <a class="button" href="mailto:{EMAIL}">Email us</a>
   </aside>
   <div class="section-head"><h2>In the press</h2><span class="meta">{len(site["press"])} articles, reviews and interviews</span></div>
   <ul class="press">{press}</ul>
