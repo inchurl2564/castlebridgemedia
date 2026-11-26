@@ -1,0 +1,31 @@
+# Rebuilds the site once a day so new podcast episodes from the Spreaker feed
+# show up on /podcast-1 without anyone running build.py by hand.
+name: Update podcast episodes
+
+on:
+  schedule:
+    - cron: "17 11 * * *"   # daily, 11:17 UTC
+  workflow_dispatch:         # also runnable from the Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python3 build.py
+      - name: Commit if anything changed
+        run: |
+          if git diff --quiet; then
+            echo "No new episodes."
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898699+github-actions[bot]@users.noreply.github.com"
+            git commit -am "Update podcast episodes"
+            git push
+          fi

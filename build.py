@@ -11,6 +11,9 @@ import html
 import json
 import os
 import re
+import urllib.request
+import xml.etree.ElementTree as ET
+from email.utils import parsedate_to_datetime
 from html.parser import HTMLParser
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -34,6 +37,9 @@ NAV = [
     ("Authors", "authors/"),
     ("About", "about/"),
 ]
+PODCAST_FEED = "https://www.spreaker.com/show/4268760/episodes/feed"
+PODCAST_SHOW_URL = "https://www.spreaker.com/podcast/castle-of-horror-podcast--4268760"
+PODCAST_EPISODES = 30  # how many recent episodes to list on the page
 
 
 def load(name):
@@ -160,6 +166,65 @@ def prepare_book(b, author_slugs):
         authors.append((part, slug if slug in author_slugs else None, False))
     return dict(b, title=title, author=author, authors=authors, body=body,
                 buy=buy, sample=sample, note=note)
+
+
+
+# ---------------------------------------------------------------- podcast feed
+ITUNES = "{http://www.itunes.com/dtds/podcast-1.0.dtd}"
+
+
+def plain(text):
+    text = re.sub(r"<br\s*/?>|</p>", " ", text or "")
+    return re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", "", text))).strip()
+
+
+def linkify(escaped):
+    return re.sub(r"(https?://[^\s,<]+)", r'<a href="\1" target="_blank" rel="noopener">\1</a>', escaped)
+
+
+def fetch_podcast():
+    """Read the Spreaker RSS feed and cache the newest episodes in data/podcast.json.
+
+    If the feed can't be reached, the last cached copy is used, so the build never fails on it.
+    """
+    cache = os.path.join(DATA, "podcast.json")
+    try:
+        req = urllib.request.Request(PODCAST_FEED, headers={"User-Agent": "castlebridgemedia-site-build"})
+        with urllib.request.urlopen(req, timeout=60) as r:
+            ch = ET.fromstring(r.read()).find("channel")
+    except Exception as e:  # network down, feed moved, bad XML...
+        print("Podcast feed unavailable (%s); using cached data/podcast.json" % e)
+        return load("podcast.json") if os.path.exists(cache) else None
+
+    img = ch.find(ITUNES + "image")
+    show = {
+        "title": ch.findtext("title"),
+        "description": plain((ch.findtext("description") or "").split("Become a supporter")[0]),
+        "image": img.get("href") if img is not None else ch.findtext("image/url"),
+        "count": len(ch.findall("item")),
+        "episodes": [],
+    }
+    for it in ch.findall("item")[:PODCAST_EPISODES]:
+        enc = it.find("enclosure")
+        try:
+            date = parsedate_to_datetime(it.findtext("pubDate")).strftime("%B %-d, %Y")
+        except Exception:
+            date = ""
+        secs = int(it.findtext(ITUNES + "duration") or 0)
+        summary = plain(it.findtext("description"))
+        if len(summary) > 320:
+            summary = summary[:320].rsplit(" ", 1)[0] + "…"
+        show["episodes"].append({
+            "title": (it.findtext("title") or "").strip(),
+            "date": date,
+            "duration": "%d min" % round(secs / 60) if secs else "",
+            "summary": summary,
+            "audio": enc.get("url") if enc is not None else None,
+            "link": it.findtext("link"),
+        })
+    with open(cache, "w", encoding="utf-8") as f:
+        json.dump(show, f, indent=1, ensure_ascii=False)
+    return show
 
 
 # ---------------------------------------------------------------- layout
@@ -303,16 +368,39 @@ def build():
     page("castling-books", "Castling Books", body, 1, "Castling Books",
          description="Castling Books is the juvenile and young adult fiction imprint of Castle Bridge Media.")
 
-    # ---- Podcast (the old Wix podcast widget had no feed connected)
-    body = """
+    # ---- Podcast (episodes come from the Spreaker RSS feed at build time)
+    show = fetch_podcast()
+    eps = ""
+    if show:
+        for e in show["episodes"]:
+            meta = " · ".join(x for x in (e["date"], e["duration"]) if x)
+            audio = ('<audio controls preload="none" src="%s"></audio>' % esc(e["audio"])) if e["audio"] else ""
+            more = (' <a href="%s" target="_blank" rel="noopener">Episode page</a>' % esc(e["link"])) if e["link"] else ""
+            eps += ('<li class="episode"><h3>%s</h3><p class="episode-meta">%s</p>%s<p>%s%s</p></li>'
+                    % (esc(e["title"]), esc(meta), audio, esc(e["summary"]), more))
+    art = ('<img class="show-art" src="%s" alt="%s artwork" width="280" height="280">'
+           % (esc(show["image"]), esc(show["title"]))) if show and show.get("image") else ""
+    total = show["count"] if show else 0
+    body = f"""
 <section class="section narrow">
   <h1 class="section-title">Podcast</h1>
-  <p class="lede">Castle Bridge Media co-publisher Jason Henderson hosts the <strong>Castle of Horror / Castle Talk</strong> podcast,
-  which regularly features genre stars like Elvira and Rob Zombie.</p>
-  <!-- TODO: paste the podcast player embed or listening links here. -->
-  <p class="muted">Episodes coming soon.</p>
+  <div class="show">
+    {art}
+    <div>
+      <h2 class="show-title">{esc(show["title"]) if show else "Castle of Horror Podcast"}</h2>
+      <p>{linkify(esc(show["description"])) if show else ""}</p>
+      <p class="actions">
+        <a class="button" href="{PODCAST_SHOW_URL}" target="_blank" rel="noopener">Listen on Spreaker</a>
+        <a class="button ghost" href="{PODCAST_FEED}" target="_blank" rel="noopener">RSS feed</a>
+      </p>
+    </div>
+  </div>
+  <h2 class="sub-title">Latest episodes</h2>
+  <ul class="episodes">{eps}</ul>
+  <p class="center"><a class="button ghost" href="{PODCAST_SHOW_URL}" target="_blank" rel="noopener">Browse all {total:,} episodes</a></p>
 </section>"""
-    page("podcast-1", "Podcast", body, 1, "Podcast")
+    page("podcast-1", "Podcast", body, 1, "Podcast",
+         description="The Castle of Horror Podcast: horror movie panel discussions and author interviews.")
 
     # ---- Submissions
     faq = [

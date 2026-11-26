@@ -207,3 +207,19 @@ strong, b { font-weight: 500; }
   .product-cover { max-width: 300px; margin: 0 auto; }
   .ribbon { font-size: 12px; }
 }
+
+/* ---------- podcast */
+.show { display: grid; grid-template-columns: 220px 1fr; gap: 32px; align-items: start; }
+.show-art { width: 100%; box-shadow: 0 2px 12px rgba(0,0,0,.15); }
+.show-title { font-weight: 400; font-size: 24px; margin: 0 0 8px; }
+.show .actions { margin: 16px 0 0; }
+.episodes { list-style: none; margin: 0 0 32px; padding: 0; }
+.episode { padding: 22px 0; border-bottom: 1px solid var(--line); }
+.episode h3 { font-weight: 400; font-size: 20px; line-height: 1.3; margin: 0 0 2px; color: var(--ink); }
+.episode-meta { font-size: 14px; color: var(--muted); margin: 0 0 12px; }
+.episode audio { width: 100%; margin: 0 0 10px; }
+.episode p:last-child { margin: 0; color: var(--ink-soft); font-size: 16px; }
+@media (max-width: 760px) {
+  .show { grid-template-columns: 1fr; gap: 20px; }
+  .show-art { max-width: 220px; margin: 0 auto; }
+}
