@@ -420,3 +420,17 @@ section.wrap > .guides { padding: 8px 0 56px; }
   color: var(--ink); background: var(--card); border: 1.5px solid var(--ink); padding: 7px 9px;
 }
 .tag:hover { background: var(--pulp); color: var(--ink); text-decoration: none; }
+
+/* ---------- podcast archive search */
+.ep-search { margin: 0 0 56px; padding: 28px; background: var(--card); border: 2px solid var(--ink); box-shadow: 6px 6px 0 var(--ink); }
+.ep-search h2 { margin: 0 0 6px; }
+.ep-search input {
+  width: 100%; min-height: 52px; margin-top: 14px; padding: 0 16px;
+  font: 400 17px var(--mono); color: var(--ink); background: var(--paper);
+  border: 2px solid var(--ink); border-radius: 0;
+}
+.ep-search input:focus { outline: none; box-shadow: 4px 4px 0 var(--blood); }
+#ep-status { margin: 14px 0 0; }
+#ep-results { margin: 18px 0 0; }
+mark { background: var(--pulp); color: var(--ink); padding: 0 2px; }
+@media (max-width: 760px) { .ep-search { padding: 20px; box-shadow: 4px 4px 0 var(--ink); } .ep-search .episode-title { font-size: 19px; } }

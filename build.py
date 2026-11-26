@@ -178,6 +178,32 @@ def linkify(escaped):
     return re.sub(r"(https?://[^\s,<]+)", r'<a href="\1" target="_blank" rel="noopener">\1</a>', escaped)
 
 
+def write_episode_index(items):
+    """Every episode in the feed, for the search box on /podcast-1 (loaded only when someone searches)."""
+    rows = []
+    for it in items:
+        enc = it.find("enclosure")
+        img = it.find(ITUNES + "image")
+        try:
+            dt = parsedate_to_datetime(it.findtext("pubDate"))
+            date, iso = dt.strftime("%b %-d, %Y"), dt.strftime("%Y-%m-%d")
+        except Exception:
+            date, iso = "", ""
+        secs = int(it.findtext(ITUNES + "duration") or 0)
+        rows.append({
+            "t": (it.findtext("title") or "").strip(),
+            "d": date, "o": iso,
+            "m": round(secs / 60) if secs else 0,
+            "s": plain(it.findtext("description")),
+            "a": enc.get("url") if enc is not None else "",
+            "l": it.findtext("link") or "",
+            "i": img.get("href") if img is not None else "",
+        })
+    os.makedirs(os.path.join(ROOT, "podcast-1"), exist_ok=True)
+    with open(os.path.join(ROOT, "podcast-1", "episodes.json"), "w", encoding="utf-8") as f:
+        json.dump(rows, f, ensure_ascii=False, separators=(",", ":"))
+
+
 def fetch_podcast():
     """Read the Spreaker RSS feed and cache the newest episodes in data/podcast.json.
 
@@ -200,6 +226,7 @@ def fetch_podcast():
         "count": len(ch.findall("item")),
         "episodes": [],
     }
+    write_episode_index(ch.findall("item"))
     for it in ch.findall("item")[:PODCAST_EPISODES]:
         enc = it.find("enclosure")
         try:
@@ -568,7 +595,14 @@ def build():
     total = show["count"] if show else 0
     body = page_head("Podcasts", "Podcasts", esc(PILLARS[1][2])) + f"""
 <section class="wrap">
-  <div class="show">
+  <div class="ep-search" id="ep-search">
+    <label for="ep-q"><h2>Search the archive</h2></label>
+    <p class="meta">Find any of our {total:,} episodes by movie, show, book, author, director, star or guest.</p>
+    <input id="ep-q" type="search" placeholder="Try “Hammer”, “John Carpenter” or “Dark Shadows”" autocomplete="off" data-index="episodes.json">
+    <p id="ep-status" class="meta" aria-live="polite"></p>
+    <ul class="episodes" id="ep-results" hidden></ul>
+  </div>
+  <div class="show" id="show-card">
     {art}
     <div>
       <p class="label">Our show</p>
@@ -580,8 +614,10 @@ def build():
       </p>
     </div>
   </div>
-  <div class="section-head"><h2>Latest episodes</h2><span class="meta">{total:,} episodes since 2013</span></div>
-  <ul class="episodes">{eps}</ul>
+  <div id="ep-latest">
+    <div class="section-head"><h2>Latest episodes</h2><span class="meta">{total:,} episodes since 2013</span></div>
+    <ul class="episodes">{eps}</ul>
+  </div>
   <p class="center"><a class="button ghost" href="{PODCAST_SHOW_URL}" target="_blank" rel="noopener">Browse all {total:,} episodes</a></p>
 </section>"""
     page("podcast-1", "Podcasts", body, 1, "Podcasts",
