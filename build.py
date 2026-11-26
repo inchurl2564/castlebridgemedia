@@ -218,6 +218,7 @@ def fetch_podcast():
             "summary": summary,
             "audio": enc.get("url") if enc is not None else None,
             "link": it.findtext("link"),
+            "image": (it.find(ITUNES + "image").get("href") if it.find(ITUNES + "image") is not None else None),
         })
     with open(cache, "w", encoding="utf-8") as f:
         json.dump(show, f, indent=1, ensure_ascii=False)
@@ -301,7 +302,7 @@ def page(path, title, body, depth, active="", description="", og_image=None, fil
 <header class="site-header">
   <div class="wrap header-inner">
     <a class="brand" href="{up}">
-      <img src="{up}images/logo.png" alt="" width="34" height="32">
+      <img src="{up}images/logo.png" alt="" width="52" height="49">
       <span>Castle Bridge Media</span>
     </a>
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
@@ -314,7 +315,7 @@ def page(path, title, body, depth, active="", description="", og_image=None, fil
 <footer class="site-footer">
   <div class="wrap footer-grid">
     <div class="footer-brand">
-      <a class="brand" href="{up}"><img src="{up}images/logo.png" alt="" width="34" height="32"><span>Castle Bridge Media</span></a>
+      <a class="brand" href="{up}"><img src="{up}images/logo.png" alt="" width="52" height="49"><span>Castle Bridge Media</span></a>
       <p>{esc(TAGLINE)}</p>
     </div>
     <div>
@@ -443,8 +444,8 @@ def build():
     latest = ""
     if show and show["episodes"]:
         e = show["episodes"][0]
-        art = ('<img class="show-art" src="%s" alt="%s artwork" width="220" height="220" loading="lazy">'
-               % (esc(show["image"]), esc(show["title"]))) if show.get("image") else ""
+        img = e.get("image") or show.get("image")
+        art = ('<img class="show-art" src="%s" alt="" width="220" height="220" loading="lazy">' % esc(img)) if img else ""
         latest = f"""
     <div class="on-air">
       {art}
@@ -550,7 +551,11 @@ def build():
          description="Castling Books is the juvenile and young adult fiction imprint of Castle Bridge Media.")
 
     # ---- Podcasts
-    eps = "".join('<li class="episode">%s</li>' % episode_html(e) for e in (show["episodes"] if show else []))
+    def ep_item(e):
+        img = e.get("image") or (show or {}).get("image")
+        thumb = ('<img class="ep-thumb" src="%s" alt="" width="140" height="140" loading="lazy">' % esc(img)) if img else ""
+        return '<li class="episode">%s<div>%s</div></li>' % (thumb, episode_html(e))
+    eps = "".join(ep_item(e) for e in (show["episodes"] if show else []))
     art = ('<img class="show-art" src="%s" alt="%s artwork" width="240" height="240">'
            % (esc(show["image"]), esc(show["title"]))) if show and show.get("image") else ""
     total = show["count"] if show else 0
