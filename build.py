@@ -37,6 +37,7 @@ NAV = [
 ]
 PODCAST_FEED = "https://www.spreaker.com/show/4268760/episodes/feed"
 PODCAST_SHOW_URL = "https://www.spreaker.com/podcast/castle-of-horror-podcast--4268760"
+PODCAST_SHOW_ID = 4268760
 PODCAST_EPISODES = 30  # how many recent episodes to list on the page
 
 
@@ -192,7 +193,10 @@ def write_episode_index(items):
         except Exception:
             date, iso = "", ""
         secs = int(it.findtext(ITUNES + "duration") or 0)
+        link = it.findtext("link") or ""
+        m = re.search(r"--(\d+)$", link)
         rows.append({
+            "id": int(m.group(1)) if m else 0,
             "t": (it.findtext("title") or "").strip(),
             "d": date, "o": iso,
             "m": round(secs / 60) if secs else 0,
@@ -201,9 +205,57 @@ def write_episode_index(items):
             "l": it.findtext("link") or "",
             "i": img.get("href") if img is not None else "",
         })
+    rows += older_episodes({r["id"] for r in rows if r["id"]})
+    rows.sort(key=lambda r: r["o"], reverse=True)
     os.makedirs(os.path.join(ROOT, "podcast-1"), exist_ok=True)
     with open(os.path.join(ROOT, "podcast-1", "episodes.json"), "w", encoding="utf-8") as f:
         json.dump(rows, f, ensure_ascii=False, separators=(",", ":"))
+    years = [r["o"][:4] for r in rows if r["o"]]
+    return len(rows), (min(years) if years else "")
+
+
+def spreaker_get(url):
+    req = urllib.request.Request(url, headers={"User-Agent": "castlebridgemedia-site-build"})
+    with urllib.request.urlopen(req, timeout=60) as r:
+        return json.load(r)["response"]
+
+
+def older_episodes(have_ids):
+    """The RSS feed stops at the newest 1,000 episodes. Fetch the rest from Spreaker's public API.
+
+    Older episodes don't change, so their details are kept in data/podcast_archive.json and only
+    episodes not already saved there are downloaded.
+    """
+    cache_path = os.path.join(DATA, "podcast_archive.json")
+    cache = {}
+    if os.path.exists(cache_path):
+        cache = {r["id"]: r for r in load("podcast_archive.json")}
+    try:
+        listed, url = [], "https://api.spreaker.com/v2/shows/%s/episodes?limit=100" % PODCAST_SHOW_ID
+        while url:
+            page = spreaker_get(url)
+            listed += page["items"]
+            url = page.get("next_url")
+        for ep in listed:
+            eid = ep["episode_id"]
+            if eid in have_ids or eid in cache:
+                continue
+            full = spreaker_get("https://api.spreaker.com/v2/episodes/%d" % eid)["episode"]
+            dt = __import__("datetime").datetime.strptime(ep["published_at"], "%Y-%m-%d %H:%M:%S")
+            cache[eid] = {
+                "id": eid, "t": ep["title"].strip(),
+                "d": dt.strftime("%b %-d, %Y"), "o": dt.strftime("%Y-%m-%d"),
+                "m": round((ep.get("duration") or 0) / 60000),
+                "s": plain(full.get("description")),
+                "a": ep.get("download_url") or "",
+                "l": ep.get("site_url") or "",
+                "i": ep.get("image_url") or "",
+            }
+        with open(cache_path, "w", encoding="utf-8") as f:
+            json.dump(sorted(cache.values(), key=lambda r: r["o"]), f, indent=0, ensure_ascii=False)
+    except Exception as e:
+        print("Spreaker API unavailable (%s); using saved older episodes" % e)
+    return [r for eid, r in cache.items() if eid not in have_ids]
 
 
 def fetch_podcast():
@@ -225,10 +277,11 @@ def fetch_podcast():
         "title": ch.findtext("title"),
         "description": plain((ch.findtext("description") or "").split("Become a supporter")[0]),
         "image": img.get("href") if img is not None else ch.findtext("image/url"),
-        "count": len(ch.findall("item")),
+        "count": 0,
+        "since": "",
         "episodes": [],
     }
-    write_episode_index(ch.findall("item"))
+    show["count"], show["since"] = write_episode_index(ch.findall("item"))
     for it in ch.findall("item")[:PODCAST_EPISODES]:
         enc = it.find("enclosure")
         try:
@@ -481,7 +534,7 @@ def build():
     wall = "".join('<div class="wall-col">%s</div>' % c for c in wall_cols)
     total_eps = show["count"] if show else 0
     stats = [("%d" % len(catalog), "books in print"), ("%d" % len(authors), "authors"),
-             ("%s" % format(total_eps, ","), "podcast episodes since 2013"),
+             ("%s" % format(total_eps, ","), "podcast episodes since %s" % (show or {}).get("since", "")),
              ("Daily", "data updates")]
     stats_html = "".join('<li><strong>%s</strong> %s</li>' % (esc(n), esc(l)) for n, l in stats)
     latest = ""
@@ -624,7 +677,7 @@ def build():
     <ul class="episodes" id="ep-results" hidden></ul>
   </div>
   <div id="ep-latest">
-    <div class="section-head"><h2>Latest episodes</h2><span class="meta">{total:,} episodes since 2013</span></div>
+    <div class="section-head"><h2>Latest episodes</h2><span class="meta">{total:,} episodes since {(show or {}).get("since", "")}</span></div>
     <ul class="episodes">{eps}</ul>
   </div>
   <p class="center"><a class="button ghost" href="{PODCAST_SHOW_URL}" target="_blank" rel="noopener">Browse all {total:,} episodes</a></p>
