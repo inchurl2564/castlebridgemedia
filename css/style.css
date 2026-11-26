@@ -51,7 +51,8 @@ p { margin: 0 0 1em; }
   color: var(--blood); margin: 0 0 16px;
 }
 .label::before { content: ""; width: 22px; height: 2px; background: currentColor; flex: none; }
-.lede { font-size: clamp(17px, 1.4vw, 19px); line-height: 1.5; color: var(--ink-2); max-width: none; }
+.lede { font-size: clamp(17px, 1.4vw, 19px); line-height: 1.5; color: var(--ink-2); max-width: 66.6%; }
+.hero .lede { max-width: none; }  /* already in a narrow column */
 .text-link { font: 500 14px/1.4 var(--mono); text-decoration: none; letter-spacing: .02em; white-space: nowrap; }
 .text-link:hover { text-decoration: underline; }
 
@@ -366,6 +367,7 @@ section.wrap > .guides { padding: 8px 0 56px; }
 }
 @media (max-width: 760px) {
   body { font-size: 15.5px; }
+  .lede { max-width: none; }
   :root { --merlon: 16px; }
   .menu-toggle {
     display: inline-flex; align-items: center; min-height: 40px; padding: 0 14px;

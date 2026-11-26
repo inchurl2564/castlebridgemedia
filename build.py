@@ -468,7 +468,7 @@ def build():
 <section class="hero">
   <div class="wrap hero-grid">
     <div class="hero-copy">
-      <p class="label">Books · Podcasts · Data</p>
+      <p class="label">An independent media company</p>
       <h1>Stories, data and the people who <em>love</em> them.</h1>
       <p class="lede">{esc(TAGLINE)}</p>
       <p class="actions"><a class="button" href="catalog/">Browse the books</a><a class="button ghost" href="podcast-1/">Hear the podcast</a></p>
