@@ -448,12 +448,14 @@ mark { background: var(--pulp); color: var(--ink); padding: 0 2px; }
 
 /* ---------- back-to-top arrow (phones) */
 .to-top {
-  position: fixed; right: 16px; bottom: 20px; z-index: 20;
+  position: fixed; z-index: 20;
+  right: calc(14px + env(safe-area-inset-right, 0px));
+  bottom: calc(12px + env(safe-area-inset-bottom, 0px));
   width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center;
-  background: var(--ink); color: #fff; border: 0; padding: 0; text-decoration: none;
+  background: var(--ink); color: #fff; border: 0; padding: 0; margin: 0; text-decoration: none;
   box-shadow: 0 0 0 1px rgba(255,255,255,.22), 0 2px 8px rgba(0,0,0,.18);
-  opacity: 0; transform: translateY(12px); pointer-events: none; transition: opacity .2s, transform .2s;
+  opacity: 0; pointer-events: none; transition: opacity .2s;
 }
-.to-top.show { opacity: 1; transform: none; pointer-events: auto; }
+.to-top.is-visible { opacity: 1; pointer-events: auto; }
 .to-top:hover { color: #fff; opacity: .85; }
 @media (min-width: 761px) { .to-top { display: none; } }

@@ -173,7 +173,7 @@
 (function () {
   var btn = document.querySelector('.to-top');
   if (!btn) return;
-  var onScroll = function () { btn.classList.toggle('show', window.scrollY > 600); };
+  var onScroll = function () { btn.classList.toggle('is-visible', window.scrollY > 600); };
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
   btn.addEventListener('click', function (e) { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
