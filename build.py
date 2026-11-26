@@ -155,6 +155,11 @@ def prepare_book(b, author_slugs):
             sample = sample or link["href"]
         else:
             buy = buy or link["href"]
+    # Kindle "Read a sample" link built from the book's Amazon ID (pre-orders have no sample yet).
+    if not sample and buy and "pre" not in (b.get("ribbon") or "").lower():
+        asin = re.search(r"/(?:dp|gp/product|d)/(B0[A-Z0-9]{8})", buy)
+        if asin:
+            sample = "https://read.amazon.com/sample/%s?clientId=share" % asin.group(1)
     title, author = split_title(b["name"])
     authors = []
     for part in re.split(r"(\s*&\s*|\s+and\s+|,\s*)", author) if author else []:
