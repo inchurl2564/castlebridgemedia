@@ -379,11 +379,11 @@ section.wrap > .guides { padding: 8px 0 56px; }
   }
   .site-nav::-webkit-scrollbar { display: none; }
   .site-nav a { flex: none; scroll-snap-align: start; padding: 13px 12px 11px; font-size: 13px; }
-  .site-nav a:first-child { padding-left: 0; }
-  .site-nav a:last-child { margin-right: 40px; }
-  .header-inner { min-height: 0; padding-top: 12px; }
-  .brand { padding-bottom: 10px; }
-  .brand img { width: 40px; }
+  .site-nav a:first-child { margin-left: auto; }   /* centered when it fits, swipeable when it doesn't */
+  .site-nav a:last-child { margin-right: auto; }
+  .header-inner { min-height: 0; padding-top: 14px; justify-content: center; }
+  .brand { padding-bottom: 12px; gap: 12px; }
+  .brand img { width: 58px; }
   .brand span { font-size: 22px; }
   .episode { grid-template-columns: 84px minmax(0, 1fr); gap: 16px; }
   .ep-thumb { width: 84px; box-shadow: 3px 3px 0 var(--ink); }
