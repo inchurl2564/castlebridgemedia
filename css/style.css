@@ -51,7 +51,7 @@ p { margin: 0 0 1em; }
   color: var(--blood); margin: 0 0 16px;
 }
 .label::before { content: ""; width: 22px; height: 2px; background: currentColor; flex: none; }
-.lede { font-size: clamp(17px, 1.4vw, 19px); line-height: 1.5; color: var(--ink-2); max-width: 60ch; }
+.lede { font-size: clamp(17px, 1.4vw, 19px); line-height: 1.5; color: var(--ink-2); max-width: none; }
 .text-link { font: 500 14px/1.4 var(--mono); text-decoration: none; letter-spacing: .02em; white-space: nowrap; }
 .text-link:hover { text-decoration: underline; }
 
