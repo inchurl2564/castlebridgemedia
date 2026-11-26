@@ -730,18 +730,11 @@ def build():
     <p class="label">What guides us</p>
     <blockquote>{esc(GUIDES)}</blockquote>
   </div>
-  <div class="two-col">
-    <div>
-      <h2>Who we are</h2>
-      <p>Castle Bridge Media is co-published by <a href="../authors/#jason-henderson">Jason Henderson</a> and
-      <a href="../authors/#in-churl-yo">In Churl Yo</a>, and is based in {LOCATION}.</p>
-    </div>
-    <aside class="callout" id="contact">
-      <h2>Contact us</h2>
-      <p>Questions, partnerships or press: we'd love to hear from you.</p>
-      <a class="button" href="mailto:{EMAIL}">{EMAIL}</a>
-    </aside>
-  </div>
+  <aside class="callout contact-box" id="contact">
+    <h2>Contact us</h2>
+    <p>Questions, partnerships or press: we'd love to hear from you.</p>
+    <a class="button" href="mailto:{EMAIL}">{EMAIL}</a>
+  </aside>
   <div class="section-head"><h2>In the press</h2><span class="meta">{len(site["press"])} articles, reviews and interviews</span></div>
   <ul class="press">{press}</ul>
 </section>"""

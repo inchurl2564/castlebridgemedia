@@ -431,3 +431,5 @@ section.wrap > .guides { padding: 8px 0 56px; }
 #ep-results { margin: 16px 0 0; }
 mark { background: var(--pulp); color: var(--ink); padding: 0 2px; }
 @media (max-width: 760px) { .ep-search .episode-title { font-size: 19px; } }
+
+.contact-box { position: static; max-width: 560px; margin: 0 0 64px; }
