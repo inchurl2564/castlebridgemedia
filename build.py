@@ -29,12 +29,10 @@ SOCIAL = [
     ("Twitter / X", "https://twitter.com/castlebridgemed"),
 ]
 NAV = [
-    ("Home", ""),
-    ("Our Catalog", "catalog/"),
-    ("Castling Books", "castling-books/"),
-    ("Podcast", "podcast-1/"),
-    ("Submissions", "submissions/"),
+    ("Books", "catalog/"),
     ("Authors", "authors/"),
+    ("Podcasts", "podcast-1/"),
+    ("Data", "data/"),
     ("About", "about/"),
 ]
 PODCAST_FEED = "https://www.spreaker.com/show/4268760/episodes/feed"
@@ -227,6 +225,26 @@ def fetch_podcast():
     return show
 
 
+# ---------------------------------------------------------------- brand copy
+TAGLINE = "Castle Bridge Media connects stories, data and the people who love them."
+PILLARS = [
+    ("Publishing", "catalog/",
+     "We publish horror, mystery, fantasy and thriller fiction for adults and young readers, "
+     "working closely with authors to find and grow their audiences.", "Browse the books"),
+    ("Podcasts", "podcast-1/",
+     "We produce podcasts about entertainment and the people who create it: conversations for fans "
+     "who want to go deeper into what they watch, read and play.", "Listen now"),
+    ("Data", "data/",
+     "We build data-driven websites and tools that help people understand culture and entertainment: "
+     "what audiences are discovering, rediscovering and talking about, and why. Our sites gather public "
+     "data, turn it into clear, sourced stories, and keep themselves up to date every day.", "See our data sites"),
+]
+GUIDES = ("We're curious about why stories last. We show our sources, and we make things for readers, "
+          "listeners and fans first, and for the writers, journalists and companies who work alongside them.")
+
+YEAR = __import__("datetime").date.today().year
+
+
 # ---------------------------------------------------------------- layout
 def page(path, title, body, depth, active="", description="", og_image=None, filename="index.html"):
     # depth=None means root-absolute links (for 404.html, served at any path).
@@ -236,10 +254,10 @@ def page(path, title, body, depth, active="", description="", og_image=None, fil
         for label, href in NAV
     )
     social = "".join(
-        '<a href="%s" target="_blank" rel="noopener">%s</a>' % (esc(u), esc(n)) for n, u in SOCIAL
+        '<li><a href="%s" target="_blank" rel="noopener">%s</a></li>' % (esc(u), esc(n)) for n, u in SOCIAL
     )
-    full_title = esc(title + " | " + SITE_NAME if title != SITE_NAME else SITE_NAME)
-    meta_desc = esc(description or "Castle Bridge Media is an independent publisher of genre books: horror, science fiction, thriller, and fantasy.")
+    full_title = esc(title + " · " + SITE_NAME if title != SITE_NAME else SITE_NAME + " · Stories, data and the people who love them")
+    meta_desc = esc(description or TAGLINE)
     og = '<meta property="og:image" content="%s%s">' % (up, og_image) if og_image else ""
     doc = f"""<!doctype html>
 <html lang="en">
@@ -250,30 +268,63 @@ def page(path, title, body, depth, active="", description="", og_image=None, fil
 <meta name="description" content="{meta_desc}">
 <meta property="og:title" content="{full_title}">
 <meta property="og:description" content="{meta_desc}">
+<meta property="og:site_name" content="{SITE_NAME}">
 {og}
+<meta name="theme-color" content="#f8f5ef">
 <link rel="icon" href="{up}images/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{up}css/style.css">
+<script src="{up}js/site.js" defer></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
 <header class="site-header">
-  <a class="brand" href="{up}">
-    <img src="{up}images/logo.png" alt="" width="85" height="80">
-    <span class="wordmark">CASTLE BRIDGE MEDIA</span>
-  </a>
-  <nav class="site-nav" aria-label="Main">{nav}</nav>
+  <div class="wrap header-inner">
+    <a class="brand" href="{up}">
+      <img src="{up}images/logo.png" alt="" width="34" height="32">
+      <span>Castle Bridge Media</span>
+    </a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav class="site-nav" id="site-nav" aria-label="Main">{nav}</nav>
+  </div>
 </header>
 <main id="main">
 {body}
 </main>
 <footer class="site-footer">
-  <div class="footer-mark">CASTLE BRIDGE MEDIA</div>
-  <nav class="social" aria-label="Social">{social}</nav>
-  <p class="contact-line"><a href="mailto:{EMAIL}">{EMAIL}</a> · {LOCATION}</p>
-  <p class="copyright">© 2020 by Castle Bridge Media.</p>
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <a class="brand" href="{up}"><img src="{up}images/logo.png" alt="" width="34" height="32"><span>Castle Bridge Media</span></a>
+      <p>{esc(TAGLINE)}</p>
+    </div>
+    <div>
+      <h2>Publishing</h2>
+      <ul>
+        <li><a href="{up}catalog/">All books</a></li>
+        <li><a href="{up}castling-books/">Castling Books</a></li>
+        <li><a href="{up}authors/">Authors</a></li>
+        <li><a href="{up}submissions/">Submissions</a></li>
+      </ul>
+    </div>
+    <div>
+      <h2>Podcasts &amp; Data</h2>
+      <ul>
+        <li><a href="{up}podcast-1/">Castle of Horror Podcast</a></li>
+        <li><a href="{up}data/">Data sites</a></li>
+        <li><a href="{up}about/">About us</a></li>
+        <li><a href="mailto:{EMAIL}">{EMAIL}</a></li>
+      </ul>
+    </div>
+    <div>
+      <h2>Follow</h2>
+      <ul>{social}</ul>
+    </div>
+  </div>
+  <div class="wrap footer-base">
+    <span>© {YEAR} Castle Bridge Media · {LOCATION}</span>
+  </div>
 </footer>
 </body>
 </html>
@@ -284,110 +335,175 @@ def page(path, title, body, depth, active="", description="", og_image=None, fil
         f.write(doc)
 
 
-def book_card(b, up, eager=False):
-    ribbon = '<span class="ribbon">%s</span>' % esc(b["ribbon"]) if b["ribbon"] else ""
+def page_head(eyebrow, title, lede="", extra=""):
+    lede_html = '<p class="lede">%s</p>' % lede if lede else ""
+    return ('<header class="page-head wrap"><p class="eyebrow">%s</p><h1>%s</h1>%s%s</header>'
+            % (esc(eyebrow), esc(title), lede_html, extra))
+
+
+def books_subnav(up, active):
+    items = [("All books", "catalog/"), ("Castling Books", "castling-books/"),
+             ("Authors", "authors/"), ("Submissions", "submissions/")]
+    return '<nav class="subnav" aria-label="Publishing">%s</nav>' % "".join(
+        '<a href="%s%s"%s>%s</a>' % (up, h, ' aria-current="page"' if l == active else "", l) for l, h in items)
+
+
+def book_card(b, up, eager=False, imprint=""):
+    ribbon = '<span class="badge">%s</span>' % esc(b["ribbon"].rstrip("!")) if b["ribbon"] else ""
     return (
-        '<li class="book-card"><a href="%sproduct-page/%s/">'
-        '<span class="cover">%s<img src="%s%s" alt="Cover of %s" loading="%s" width="400" height="600"></span>'
+        '<li class="book-card"%s><a href="%sproduct-page/%s/">'
+        '<span class="cover"><img src="%s%s" alt="" loading="%s" width="400" height="600">%s</span>'
         '<span class="book-title">%s</span><span class="book-author">%s</span></a></li>'
-        % (up, b["slug"], ribbon, up, b["cover"], esc(b["title"]), "eager" if eager else "lazy",
-           esc(b["title"]), esc(b["author"]))
+        % (' data-imprint="%s"' % imprint if imprint else "", up, b["slug"], up, b["cover"],
+           "eager" if eager else "lazy", ribbon, esc(b["title"]), esc(b["author"]))
     )
 
 
-def grid(books, up, extra_class="", eager=0):
-    cards = "".join(book_card(b, up, i < eager) for i, b in enumerate(books))
+def grid(books, up, extra_class="", eager=0, castling=()):
+    cards = "".join(book_card(b, up, i < eager, "castling" if b["slug"] in castling else "cbm")
+                    for i, b in enumerate(books))
     return '<ul class="book-grid %s">%s</ul>' % (extra_class, cards)
+
+
+def episode_html(e, heading="h3"):
+    meta = " · ".join(x for x in (e["date"], e["duration"]) if x)
+    audio = ('<audio controls preload="none" src="%s"></audio>' % esc(e["audio"])) if e["audio"] else ""
+    more = (' <a href="%s" target="_blank" rel="noopener">Episode page</a>' % esc(e["link"])) if e["link"] else ""
+    return ('<%s class="episode-title">%s</%s><p class="meta">%s</p>%s<p class="episode-summary">%s%s</p>'
+            % (heading, esc(e["title"]), heading, esc(meta), audio, esc(e["summary"]), more))
+
+
+def project_card(p):
+    host = re.sub(r"^https?://(www\.)?", "", p["url"]).rstrip("/")
+    img = ('<img src="%s" alt="" loading="lazy">' % esc(p["image"])) if p.get("image") else ""
+    desc = '<p>%s</p>' % esc(p["description"]) if p.get("description") else ""
+    return ('<li class="project-card"><a href="%s" target="_blank" rel="noopener">%s'
+            '<span class="project-host">%s</span><h3>%s</h3>%s<span class="arrow">Visit site →</span></a></li>'
+            % (esc(p["url"]), img, esc(host), esc(p["name"]), desc))
 
 
 # ---------------------------------------------------------------- pages
 def build():
     site = load("site.json")
     authors = load("authors.json")
+    projects = load("projects.json") if os.path.exists(os.path.join(DATA, "projects.json")) else []
     author_slugs = {a["slug"] for a in authors}
     books = [prepare_book(b, author_slugs) for b in load("books.json")]
     by_slug = {b["slug"]: b for b in books}
+    castling_slugs = set(site["castling"])
+    show = fetch_podcast()
 
-    # Books by each author, for the authors page.
     books_by_author = {}
     for b in books:
         for _, slug, _sep in b["authors"]:
             if slug:
                 books_by_author.setdefault(slug, []).append(b)
 
-    # ---- Home
     featured = [by_slug[s] for s in site["featured"] if s in by_slug]
-    body = f"""
-<section class="hero" aria-label="Castle Bridge Media">
-  <img src="images/hero.jpg" alt="" width="2400" height="479">
-</section>
-<section class="section">
-  <h1 class="section-title">Featured Titles</h1>
-  {grid(featured, "", "featured", eager=4)}
-  <p class="center"><a class="button" href="catalog/">See All</a></p>
-</section>"""
-    page("", SITE_NAME, body, 0, "Home", og_image="images/logo.png")
-
-    # ---- Catalog (everything; Castling titles listed last as on the old site)
     order = site["catalog"] + [s for s in site["castling"] if s not in site["catalog"]]
     order += sorted(s for s in by_slug if s not in order)
     catalog = [by_slug[s] for s in order if s in by_slug]
-    body = f"""
-<section class="section">
-  <h1 class="section-title">Our Catalog</h1>
-  <div class="search">
-    <label for="q" class="visually-hidden">Search the catalog</label>
-    <input id="q" type="search" placeholder="Search by title or author" autocomplete="off">
-    <p id="count" class="count" aria-live="polite">{len(catalog)} titles</p>
+
+    # ---- Home
+    pillars = "".join(
+        '<li class="pillar"><span class="pillar-num">0%d</span><h3>%s</h3><p>%s</p>'
+        '<a class="text-link" href="%s">%s →</a></li>' % (i + 1, esc(t), esc(d), href, esc(cta))
+        for i, (t, href, d, cta) in enumerate(PILLARS))
+    latest = ""
+    if show and show["episodes"]:
+        e = show["episodes"][0]
+        art = ('<img class="show-art" src="%s" alt="%s artwork" width="200" height="200" loading="lazy">'
+               % (esc(show["image"]), esc(show["title"]))) if show.get("image") else ""
+        latest = f"""
+<section class="band band-alt">
+  <div class="wrap">
+    <div class="section-head"><h2>Latest episode</h2><a class="text-link" href="podcast-1/">All episodes →</a></div>
+    <div class="latest">
+      {art}
+      <div><p class="eyebrow">{esc(show["title"])}</p>{episode_html(e)}</div>
+    </div>
   </div>
-  {grid(catalog, "../", "catalog-grid", eager=8)}
-  <p id="empty" class="center muted" hidden>No titles match that search.</p>
+</section>"""
+    data_band = ""
+    if projects:
+        data_band = f"""
+<section class="band">
+  <div class="wrap">
+    <div class="section-head"><h2>From our data sites</h2><a class="text-link" href="data/">About our data work →</a></div>
+    <ul class="project-grid">{"".join(project_card(p) for p in projects)}</ul>
+  </div>
+</section>"""
+    body = f"""
+<section class="hero">
+  <div class="wrap">
+    <p class="eyebrow">Castle Bridge Media</p>
+    <h1>Stories, data and the people who love them.</h1>
+    <p class="lede">{esc(TAGLINE)} We publish books, produce podcasts and build data sites about culture and entertainment.</p>
+    <p class="actions"><a class="button" href="catalog/">Browse our books</a><a class="button ghost" href="podcast-1/">Listen to the podcast</a></p>
+  </div>
 </section>
-<script>
-(function () {{
-  var q = document.getElementById('q'), cards = document.querySelectorAll('.catalog-grid .book-card');
-  var count = document.getElementById('count'), empty = document.getElementById('empty');
-  q.addEventListener('input', function () {{
-    var t = q.value.trim().toLowerCase(), n = 0;
-    cards.forEach(function (c) {{ var hit = c.textContent.toLowerCase().indexOf(t) !== -1; c.hidden = !hit; if (hit) n++; }});
-    count.textContent = n + (n === 1 ? ' title' : ' titles');
-    empty.hidden = n !== 0;
-  }});
-}})();
-</script>"""
-    page("catalog", "Our Catalog", body, 1, "Our Catalog")
+<section class="band band-tight">
+  <div class="wrap"><ul class="pillars">{pillars}</ul></div>
+</section>
+<section class="band">
+  <div class="wrap">
+    <div class="section-head"><h2>New &amp; notable</h2><a class="text-link" href="catalog/">All {len(catalog)} books →</a></div>
+    {grid(featured, "", "shelf", eager=5, castling=castling_slugs)}
+  </div>
+</section>
+{latest}
+{data_band}
+<section class="band">
+  <div class="wrap guides">
+    <p class="eyebrow">What guides us</p>
+    <blockquote>{esc(GUIDES)}</blockquote>
+    <a class="text-link" href="about/">More about us →</a>
+  </div>
+</section>"""
+    page("", SITE_NAME, body, 0, "", og_image="images/logo.png")
+
+    # ---- Books (catalog)
+    filters = ('<div class="filters" role="group" aria-label="Filter books">'
+               '<button type="button" data-filter="all" aria-pressed="true">All</button>'
+               '<button type="button" data-filter="cbm" aria-pressed="false">Adult fiction &amp; nonfiction</button>'
+               '<button type="button" data-filter="castling" aria-pressed="false">Young readers</button></div>')
+    body = page_head("Publishing", "Books", esc(PILLARS[0][2]), books_subnav("../", "All books")) + f"""
+<section class="wrap catalog">
+  <div class="toolbar">
+    <label class="search"><span class="visually-hidden">Search books</span>
+      <input id="q" type="search" placeholder="Search by title or author" autocomplete="off"></label>
+    {filters}
+  </div>
+  <p id="count" class="meta" aria-live="polite">{len(catalog)} books</p>
+  {grid(catalog, "../", "catalog-grid", eager=8, castling=castling_slugs)}
+  <p id="empty" class="empty" hidden>No books match that search.</p>
+</section>"""
+    page("catalog", "Books", body, 1, "Books")
 
     # ---- Castling Books
     castling = [by_slug[s] for s in site["castling"] if s in by_slug]
-    body = f"""
-<section class="section">
-  <img class="imprint-logo" src="../images/castling-logo.jpg" alt="Castling Books" width="400" height="280">
-  <p class="lede center">Castling Books is an Imprint of Castle Bridge Media that focuses on juvenile and young adult fiction.</p>
-  {grid(castling, "../", eager=4)}
+    body = page_head("Imprint", "Castling Books",
+                     "Castling Books is the Castle Bridge Media imprint for juvenile and young adult fiction.",
+                     books_subnav("../", "Castling Books")) + f"""
+<section class="wrap imprint">
+  <img class="imprint-logo" src="../images/castling-logo.jpg" alt="Castling Books logo" width="400" height="280">
+  {grid(castling, "../", eager=6)}
 </section>"""
-    page("castling-books", "Castling Books", body, 1, "Castling Books",
+    page("castling-books", "Castling Books", body, 1, "Books",
          description="Castling Books is the juvenile and young adult fiction imprint of Castle Bridge Media.")
 
-    # ---- Podcast (episodes come from the Spreaker RSS feed at build time)
-    show = fetch_podcast()
-    eps = ""
-    if show:
-        for e in show["episodes"]:
-            meta = " · ".join(x for x in (e["date"], e["duration"]) if x)
-            audio = ('<audio controls preload="none" src="%s"></audio>' % esc(e["audio"])) if e["audio"] else ""
-            more = (' <a href="%s" target="_blank" rel="noopener">Episode page</a>' % esc(e["link"])) if e["link"] else ""
-            eps += ('<li class="episode"><h3>%s</h3><p class="episode-meta">%s</p>%s<p>%s%s</p></li>'
-                    % (esc(e["title"]), esc(meta), audio, esc(e["summary"]), more))
-    art = ('<img class="show-art" src="%s" alt="%s artwork" width="280" height="280">'
+    # ---- Podcasts
+    eps = "".join('<li class="episode">%s</li>' % episode_html(e) for e in (show["episodes"] if show else []))
+    art = ('<img class="show-art" src="%s" alt="%s artwork" width="240" height="240">'
            % (esc(show["image"]), esc(show["title"]))) if show and show.get("image") else ""
     total = show["count"] if show else 0
-    body = f"""
-<section class="section narrow">
-  <h1 class="section-title">Podcast</h1>
+    body = page_head("Podcasts", "Podcasts", esc(PILLARS[1][2])) + f"""
+<section class="wrap">
   <div class="show">
     {art}
     <div>
-      <h2 class="show-title">{esc(show["title"]) if show else "Castle of Horror Podcast"}</h2>
+      <p class="eyebrow">Our show</p>
+      <h2>{esc(show["title"]) if show else "Castle of Horror Podcast"}</h2>
       <p>{linkify(esc(show["description"])) if show else ""}</p>
       <p class="actions">
         <a class="button" href="{PODCAST_SHOW_URL}" target="_blank" rel="noopener">Listen on Spreaker</a>
@@ -395,12 +511,30 @@ def build():
       </p>
     </div>
   </div>
-  <h2 class="sub-title">Latest episodes</h2>
+  <div class="section-head"><h2>Latest episodes</h2><span class="meta">{total:,} episodes since 2013</span></div>
   <ul class="episodes">{eps}</ul>
   <p class="center"><a class="button ghost" href="{PODCAST_SHOW_URL}" target="_blank" rel="noopener">Browse all {total:,} episodes</a></p>
 </section>"""
-    page("podcast-1", "Podcast", body, 1, "Podcast",
+    page("podcast-1", "Podcasts", body, 1, "Podcasts",
          description="The Castle of Horror Podcast: horror movie panel discussions and author interviews.")
+
+    # ---- Data
+    if projects:
+        proj = '<ul class="project-grid">%s</ul>' % "".join(project_card(p) for p in projects)
+    else:
+        proj = '<p class="empty">Our first data sites are on the way.</p>'
+    body = page_head("Data", "Data sites", esc(PILLARS[2][2])) + f"""
+<section class="wrap">
+  <div class="section-head"><h2>Our sites</h2></div>
+  {proj}
+  <div class="principles">
+    <div><h3>Public data</h3><p>Our sites gather publicly available data about what people watch, read, play and talk about.</p></div>
+    <div><h3>Sourced stories</h3><p>We turn that data into clear stories and show where every number comes from.</p></div>
+    <div><h3>Always current</h3><p>Each site updates itself every day, so what you read reflects what audiences are doing now.</p></div>
+  </div>
+  <p class="contact-note">Working on something where data could help? <a href="mailto:{EMAIL}">Get in touch</a>.</p>
+</section>"""
+    page("data", "Data sites", body, 1, "Data", description=PILLARS[2][2][:155])
 
     # ---- Submissions
     faq = [
@@ -416,37 +550,53 @@ def build():
          "<p>The Castle of Horror Anthology series is submission by invitation only at this time.</p>"),
     ]
     faq_html = "".join('<details><summary>%s</summary>%s</details>' % (esc(q), a) for q, a in faq)
-    body = f"""
-<section class="section narrow prose">
-  <h1 class="section-title">Submissions</h1>
-  <p>Castle Bridge Media is an independent publisher of predominantly genre books, with particular interest in horror, science fiction, thriller, and fantasy. We also dabble in non-fiction titles as well. However, regardless of the genre, if the work is good, we will consider it. Novels should generally run between 80,000 and 120,000 words.</p>
-  <p>We will read your query. We generally respond within 3-6 months. If we like your book, we will ask for the completed manuscript. Do not submit a query without a completed manuscript. We also accept simultaneous submissions, just tell us if you've placed your work somewhere else.</p>
-  <p>Please submit your work using our <a href="{QUERY_URL}" target="_blank" rel="noopener">QueryManager page</a>.</p>
-  <p class="center"><a class="button" href="{QUERY_URL}" target="_blank" rel="noopener">Submit on QueryManager</a></p>
-  <p>Thank you so much for your interest in Castle Bridge Media!</p>
-  <h2 class="sub-title">Frequently asked questions</h2>
-  <div class="faq">{faq_html}</div>
+    body = page_head("Publishing", "Submissions", "We're always looking for great genre fiction.",
+                     books_subnav("../", "Submissions")) + f"""
+<section class="wrap two-col">
+  <div class="prose">
+    <p>Castle Bridge Media is an independent publisher of predominantly genre books, with particular interest in horror, mystery, fantasy, science fiction and thriller. We also dabble in non-fiction titles. Regardless of the genre, if the work is good, we will consider it. Novels should generally run between 80,000 and 120,000 words.</p>
+    <p>We will read your query. We generally respond within 3–6 months. If we like your book, we will ask for the completed manuscript. Do not submit a query without a completed manuscript. We also accept simultaneous submissions; just tell us if you've placed your work somewhere else.</p>
+    <p>Thank you so much for your interest in Castle Bridge Media!</p>
+    <h2>Frequently asked questions</h2>
+    <div class="faq">{faq_html}</div>
+  </div>
+  <aside class="callout">
+    <h2>Ready to submit?</h2>
+    <p>We take queries through QueryManager.</p>
+    <a class="button" href="{QUERY_URL}" target="_blank" rel="noopener">Submit on QueryManager</a>
+    <ul class="checklist">
+      <li>Completed manuscript</li>
+      <li>80,000–120,000 words for novels</li>
+      <li>Simultaneous submissions welcome</li>
+      <li>Replies in 3–6 months</li>
+    </ul>
+  </aside>
 </section>"""
-    page("submissions", "Submissions", body, 1, "Submissions",
+    page("submissions", "Submissions", body, 1, "Books",
          description="How to submit your manuscript to Castle Bridge Media.")
 
     # ---- Authors
     cards = []
     for a in authors:
-        photo = ('<img src="../%s" alt="%s" loading="lazy" width="500" height="500">' % (a["photo"], esc(a["name"]))
-                 if a["photo"] else "")
+        photo = ('<img src="../%s" alt="" loading="lazy" width="500" height="500">' % a["photo"]) if a["photo"] else ""
         bio = "".join("<p>%s</p>" % esc(p) for p in a["bio"])
         titles = books_by_author.get(a["slug"], [])
         tl = ""
         if titles:
-            tl = '<p class="author-books"><span>Books:</span> %s</p>' % ", ".join(
+            tl = '<p class="author-books">%s</p>' % " · ".join(
                 '<a href="../product-page/%s/">%s</a>' % (b["slug"], esc(b["title"])) for b in titles)
-        cards.append('<li class="author" id="%s">%s<h2>%s</h2>%s%s</li>' % (a["slug"], photo, esc(a["name"]), bio, tl))
-    index = "".join('<a href="#%s">%s</a>' % (a["slug"], esc(a["name"])) for a in authors)
-    body = f"""
-<section class="section">
-  <h1 class="section-title">Authors</h1>
-  <details class="author-index"><summary>Jump to an author ({len(authors)})</summary><nav>{index}</nav></details>
+        cards.append('<li class="author" id="%s">%s<div><h2>%s</h2>%s<div class="bio">%s</div></div></li>'
+                     % (a["slug"], photo, esc(a["name"]), tl, bio))
+    letters = []
+    for a in authors:
+        L = a["name"].replace(".", " ").split()[-1][0].upper()
+        if L not in [x[0] for x in letters]:
+            letters.append((L, a["slug"]))
+    index = "".join('<a href="#%s">%s</a>' % (slug, L) for L, slug in letters)
+    body = page_head("Publishing", "Authors", "The %d writers, editors and artists who publish with us." % len(authors),
+                     books_subnav("../", "Authors")) + f"""
+<section class="wrap">
+  <nav class="alpha" aria-label="Authors by surname">{index}</nav>
   <ul class="author-grid">{"".join(cards)}</ul>
 </section>"""
     page("authors", "Authors", body, 1, "Authors", description="The authors of Castle Bridge Media.")
@@ -454,20 +604,31 @@ def build():
     # ---- About
     press = "".join(
         '<li><a href="%s" target="_blank" rel="noopener">%s</a>%s</li>'
-        % (esc(p["href"]), esc(p["title"]), ' <span class="source">%s</span>' % esc(p["source"]) if p["source"] else "")
+        % (esc(p["href"]), esc(p["title"]), ' <span class="meta">%s</span>' % esc(p["source"]) if p["source"] else "")
         for p in site["press"]
     )
-    body = f"""
-<section class="section narrow">
-  <h1 class="section-title">About Us</h1>
-  <p class="lede center">Castle Bridge Media is an independent publisher of predominantly genre books, with particular interest in horror, science fiction, thriller, and fantasy.</p>
-  <h2 class="sub-title">In the Press</h2>
-  <ul class="press">{press}</ul>
-  <h2 class="sub-title" id="contact">Contact Us</h2>
-  <div class="contact">
-    <p><strong>Castle Bridge Media</strong><br>{LOCATION}<br><a href="mailto:{EMAIL}">{EMAIL}</a></p>
-    <p class="center"><a class="button" href="mailto:{EMAIL}">Send us a message</a></p>
+    what = "".join('<div><h3>%s</h3><p>%s</p></div>' % (esc(t), esc(d)) for t, _, d, _ in PILLARS)
+    body = page_head("About", "About Castle Bridge Media", esc(TAGLINE)) + f"""
+<section class="wrap">
+  <div class="principles">{what}</div>
+  <div class="guides">
+    <p class="eyebrow">What guides us</p>
+    <blockquote>{esc(GUIDES)}</blockquote>
   </div>
+  <div class="two-col">
+    <div>
+      <h2>Who we are</h2>
+      <p>Castle Bridge Media is co-published by <a href="../authors/#jason-henderson">Jason Henderson</a> and
+      <a href="../authors/#in-churl-yo">In Churl Yo</a>, and is based in {LOCATION}.</p>
+    </div>
+    <aside class="callout" id="contact">
+      <h2>Contact us</h2>
+      <p>Questions, partnerships or press: we'd love to hear from you.</p>
+      <a class="button" href="mailto:{EMAIL}">{EMAIL}</a>
+    </aside>
+  </div>
+  <div class="section-head"><h2>In the press</h2><span class="meta">{len(site["press"])} articles, reviews and interviews</span></div>
+  <ul class="press">{press}</ul>
 </section>"""
     page("about", "About", body, 1, "About")
 
@@ -479,7 +640,7 @@ def build():
         for name, slug, sep in b["authors"]:
             names.append('<a href="%sauthors/#%s">%s</a>' % (up, slug, esc(name)) if slug else esc(name))
         byline = '<p class="byline">by %s</p>' % "".join(names) if b["author"] else ""
-        ribbon = '<span class="ribbon static">%s</span>' % esc(b["ribbon"]) if b["ribbon"] else ""
+        badge = '<span class="badge static">%s</span>' % esc(b["ribbon"].rstrip("!")) if b["ribbon"] else ""
         label = "Pre-order on Amazon" if "pre" in b["ribbon"].lower() else "Buy on Amazon"
         buttons = ""
         if b["buy"]:
@@ -487,39 +648,41 @@ def build():
         if b["sample"]:
             buttons += '<a class="button ghost" href="%s" target="_blank" rel="noopener">Read a sample</a>' % esc(b["sample"])
         note = '<p class="note">%s</p>' % esc(b["note"]) if b["note"] else ""
-        related = [r for r in related_pool if r["slug"] != b["slug"]][:4]
+        imprint = ('<p class="meta">A <a href="%scastling-books/">Castling Books</a> title for young readers</p>' % up
+                   if b["slug"] in castling_slugs else "")
+        related = [r for r in related_pool if r["slug"] != b["slug"]][:5]
         body = f"""
-<article class="section product">
-  <p class="crumbs"><a href="{up}catalog/">Our Catalog</a> / {esc(b["title"])}</p>
+<article class="wrap product">
+  <nav class="crumbs" aria-label="Breadcrumb"><a href="{up}catalog/">Books</a> <span aria-hidden="true">/</span> {esc(b["title"])}</nav>
   <div class="product-grid">
-    <div class="product-cover">{ribbon}<img src="{up}{b["cover"]}" alt="Cover of {esc(b["title"])}" width="400" height="600"></div>
+    <div class="product-cover"><img src="{up}{b["cover"]}" alt="Cover of {esc(b["title"])}" width="400" height="600"></div>
     <div class="product-info">
+      {badge}
       <h1>{esc(b["title"])}</h1>
       {byline}
+      {imprint}
       {note}
       <div class="actions">{buttons}</div>
       <div class="prose">{b["body"]}</div>
     </div>
   </div>
 </article>
-<section class="section related">
-  <h2 class="sub-title">More from Castle Bridge Media</h2>
-  {grid(related, up)}
+<section class="band band-alt">
+  <div class="wrap">
+    <div class="section-head"><h2>More from Castle Bridge Media</h2><a class="text-link" href="{up}catalog/">All books →</a></div>
+    {grid(related, up, "shelf")}
+  </div>
 </section>"""
-        plain = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", html.unescape(b["body"]))).strip()
-        page("product-page/" + b["slug"], b["name"], body, 2, "Our Catalog",
-             description=plain[:155], og_image=b["cover"])
+        plain_desc = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", html.unescape(b["body"]))).strip()
+        page("product-page/" + b["slug"], b["name"], body, 2, "Books",
+             description=plain_desc[:155], og_image=b["cover"])
 
     # ---- 404 page (GitHub Pages / Netlify serve /404.html)
-    body = """
-<section class="section narrow center">
-  <h1 class="section-title">Page not found</h1>
-  <p>Sorry, we couldn't find that page.</p>
-  <p><a class="button" href="/catalog/">Browse the catalog</a></p>
-</section>"""
+    body = page_head("404", "Page not found", "Sorry, we couldn't find that page.") + """
+<section class="wrap"><p class="actions"><a class="button" href="/">Go to the home page</a><a class="button ghost" href="/catalog/">Browse books</a></p></section>"""
     page("", "Page not found", body, None, filename="404.html")
 
-    print("Built %d books, %d authors, %d press links." % (len(books), len(authors), len(site["press"])))
+    print("Built %d books, %d authors, %d press links, %d data projects." % (len(books), len(authors), len(site["press"]), len(projects)))
 
 
 if __name__ == "__main__":
