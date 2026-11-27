@@ -48,11 +48,14 @@ then open http://localhost:8000.
 - **New Data section** (`/data/`) for data sites.
 - **Catalog search** was added.
 
-## Publishing on GitHub Pages
+## Hosting
 
-Settings → Pages → Build and deployment → Deploy from a branch → `main` / root. To use
-castlebridgemedia.com, add it under Custom domain and update the domain's DNS records as GitHub
-describes.
+The site is hosted on **Cloudflare Pages** (project `castlebridgemedia`) at
+https://castlebridgemedia.com, with https://castlebridgemedia.pages.dev as Cloudflare's own address.
+Cloudflare deploys automatically on every push to `main`, including the daily podcast update.
+There is no build step on Cloudflare: the HTML is built by `build.py` and committed.
+
+The domain is registered at GoDaddy, with its nameservers pointing at Cloudflare.
 
 ## Phone hero image
 

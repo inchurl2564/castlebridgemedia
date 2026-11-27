@@ -21,7 +21,7 @@ DATA = os.path.join(ROOT, "data")
 
 SITE_NAME = "Castle Bridge Media"
 # Public address of the site, used for link previews (Messages, social media). Change when the domain moves.
-SITE_URL = "https://inchurl2564.github.io/castlebridgemedia/"
+SITE_URL = "https://castlebridgemedia.com/"
 EMAIL = "castlebridgemedia@gmail.com"
 LOCATION = "Denver, Colorado"
 QUERY_URL = "https://querymanager.com/query/castlebridgemedia"
