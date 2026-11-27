@@ -109,7 +109,7 @@ def split_title(name):
 
 
 BUY_PHRASE = re.compile(
-    r"(?i)^\W*(on sale|order|pre-?order|available|get your copy|link to buy|click here|buy|read sample|now)\b")
+    r"(?i)^\W*(on sale|order|pre-?order|available|get your copy|pick up|link to buy|click here|buy|read sample|now)\b")
 # Short names used in book titles -> author page slugs.
 AUTHOR_ALIASES = {
     "Henderson": "jason-henderson",
@@ -154,7 +154,7 @@ def prepare_book(b, author_slugs):
     m = re.match(r"<p>(.*?)</p>", body, re.S)
     if m:
         t = re.sub(r"<[^>]+>", "", m.group(1)).strip()
-        if len(t) < 60 and re.search(r"(?i)\b(order|on sale|get your copy|available now)\b", t):
+        if len(t) < 60 and re.search(r"(?i)\b(order|on sale|get your copy|pick up|available now|buy|now)\b", t):
             body = body[m.end():].strip()
 
     buy, sample = None, None
