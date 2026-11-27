@@ -25,8 +25,12 @@ SITE_URL = "https://inchurl2564.github.io/castlebridgemedia/"
 EMAIL = "castlebridgemedia@gmail.com"
 LOCATION = "Denver, Colorado"
 QUERY_URL = "https://querymanager.com/query/castlebridgemedia"
-# Google Form embedded on the About page
-CONTACT_FORM = "https://docs.google.com/forms/d/e/1FAIpQLScX1vA_yh5uRhqAtEUQaZr4XKNi3TOSDFKN7zIhJB8e6YKW4A/viewform"
+# Contact form on the About page. It is the site's own form, but it submits into this Google Form, so
+# responses keep arriving in Google Forms. If questions change in the Google Form, update the entry IDs
+# below (each question's "entry.NNN" name, found in the form's page source).
+CONTACT_FORM_ID = "1FAIpQLScX1vA_yh5uRhqAtEUQaZr4XKNi3TOSDFKN7zIhJB8e6YKW4A"
+CONTACT_FIELDS = {"name": "entry.2005620554", "email": "entry.1045781291",
+                  "subject": "entry.1166974658", "message": "entry.839337160"}
 SOCIAL = [
     ("Amazon", "https://www.amazon.com/s?k=Castle+Bridge+Media&i=digital-text&ref=nb_sb_noss_2"),
     ("Facebook", "https://www.facebook.com/castlebridgemedia/"),
@@ -796,11 +800,30 @@ def build():
     <p class="label">What guides us</p>
     <blockquote>{esc(GUIDES)}</blockquote>
   </div>
-  <section class="contact-form" id="contact">
-    <div class="form-frame">
-      <iframe src="{CONTACT_FORM}?embedded=true" title="Contact form" loading="lazy">Loading…</iframe>
+  <section class="contact" id="contact">
+    <h2>Contact us</h2>
+    <p class="contact-intro">Questions, submissions, partnerships or press: send us a message and we'll get back to you.</p>
+    <form class="contact-card" id="contact-form" method="POST" target="contact-sink"
+          action="https://docs.google.com/forms/d/e/{CONTACT_FORM_ID}/formResponse">
+      <div class="field-row">
+        <label class="field"><span>Name</span><input name="{CONTACT_FIELDS["name"]}" type="text" autocomplete="name" required></label>
+        <label class="field"><span>Email</span><input name="{CONTACT_FIELDS["email"]}" type="email" autocomplete="email" required></label>
+      </div>
+      <label class="field"><span>Subject</span><input name="{CONTACT_FIELDS["subject"]}" type="text" required></label>
+      <label class="field"><span>Message</span><textarea name="{CONTACT_FIELDS["message"]}" rows="6" required></textarea></label>
+      <input type="hidden" name="emailAddress" value="">
+      <div class="form-actions">
+        <button class="button" type="submit">Send message</button>
+        <p class="meta">Prefer email? <a href="mailto:{EMAIL}">{EMAIL}</a></p>
+      </div>
+      <p class="form-status" role="status" aria-live="polite"></p>
+    </form>
+    <div class="contact-card contact-thanks" id="contact-thanks" hidden tabindex="-1">
+      <h3>Thanks, your message is on its way.</h3>
+      <p>We read everything and will reply as soon as we can.</p>
+      <button class="button ghost" type="button" id="contact-again">Send another message</button>
     </div>
-    <p class="meta">Prefer email? <a href="mailto:{EMAIL}">{EMAIL}</a></p>
+    <iframe name="contact-sink" title="Form submission" hidden></iframe>
   </section>
   <div class="section-head"><h2>In the press</h2><span class="meta">{len(site["press"])} articles, reviews and interviews</span></div>
   <ul class="press">{press}</ul>

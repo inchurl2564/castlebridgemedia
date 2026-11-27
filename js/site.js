@@ -178,3 +178,35 @@
   onScroll();
   btn.addEventListener('click', function (e) { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
 })();
+
+// Contact form: posts into the Google Form through a hidden frame, then shows a thank-you note.
+(function () {
+  var form = document.getElementById('contact-form');
+  if (!form) return;
+  var thanks = document.getElementById('contact-thanks');
+  var status = form.querySelector('.form-status');
+  var sink = document.querySelector('iframe[name="contact-sink"]');
+  var sent = false;
+  form.addEventListener('submit', function () {
+    // the Google Form also collects the responder's email separately; send the same address there
+    form.querySelector('input[name="emailAddress"]').value = form.querySelector('input[type="email"]').value;
+    sent = true;
+    form.querySelector('button[type="submit"]').disabled = true;
+    status.textContent = 'Sending…';
+  });
+  sink.addEventListener('load', function () {
+    if (!sent) return;
+    sent = false;
+    form.reset();
+    form.querySelector('button[type="submit"]').disabled = false;
+    status.textContent = '';
+    form.hidden = true;
+    thanks.hidden = false;
+    thanks.focus();
+  });
+  document.getElementById('contact-again').addEventListener('click', function () {
+    thanks.hidden = true;
+    form.hidden = false;
+    form.querySelector('input').focus();
+  });
+})();
