@@ -460,17 +460,10 @@ mark { background: var(--pulp); color: var(--ink); padding: 0 2px; }
 .to-top:hover { color: #fff; opacity: .85; }
 @media (min-width: 761px) { .to-top { display: none; } }
 
-/* ---------- phones: podcast episodes as cards, matching the home page's latest-episode card */
+/* ---------- phones: podcast episodes stacked (art on top) on the page background, with separators */
 @media (max-width: 760px) {
-  .episodes .episode {
-    display: block; padding: 20px; margin: 0 0 20px; border: 1px solid #3b362f; border-top: 1px solid #3b362f;
-    background: #1f1b16; color: #e9e2d4;
-  }
-  .episodes .ep-thumb { width: 150px; max-width: 150px; margin: 0 0 22px; box-shadow: 6px 6px 0 var(--blood); background: #2a251f; }
-  .episodes .episode-title { color: #fff; font-size: 22px; }
-  .episodes .meta { color: #9b9387; }
-  .episodes .episode-summary { color: #c9c1b3; }
-  .episodes .episode a { color: var(--pulp); }
-  .episodes mark { background: var(--pulp); color: var(--ink); }
-  .ep-search .episode-title { font-size: 22px; }
+  .episodes .episode { display: block; padding: 28px 0; margin: 0; border-top: 1px solid var(--rule); background: none; }
+  .episodes .episode:first-child { border-top: 2px solid var(--ink); }
+  .episodes .ep-thumb { width: 150px; max-width: 150px; margin: 0 0 20px; box-shadow: 6px 6px 0 var(--blood); background: var(--paper-2); }
+  .episodes .episode-title { font-size: 22px; }
 }
