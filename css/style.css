@@ -467,3 +467,11 @@ mark { background: var(--pulp); color: var(--ink); padding: 0 2px; }
   .episodes .ep-thumb { width: 150px; max-width: 150px; margin: 0 0 20px; box-shadow: 6px 6px 0 var(--blood); background: var(--paper-2); }
   .episodes .episode-title { font-size: 22px; }
 }
+
+/* ---------- About: embedded Google Form */
+.contact-form { max-width: 720px; margin: 0 0 72px; }
+.contact-form h2 { font-size: 32px; }
+.contact-form > p { color: var(--ink-2); }
+.form-frame { background: var(--card); border: 2px solid var(--ink); box-shadow: 6px 6px 0 var(--ink); margin: 18px 0 14px; }
+.form-frame iframe { display: block; width: 100%; height: 1150px; border: 0; }
+@media (max-width: 760px) { .form-frame { box-shadow: 4px 4px 0 var(--ink); } .form-frame iframe { height: 1250px; } }

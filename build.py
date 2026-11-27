@@ -25,6 +25,8 @@ SITE_URL = "https://inchurl2564.github.io/castlebridgemedia/"
 EMAIL = "castlebridgemedia@gmail.com"
 LOCATION = "Denver, Colorado"
 QUERY_URL = "https://querymanager.com/query/castlebridgemedia"
+# Google Form embedded on the About page
+CONTACT_FORM = "https://docs.google.com/forms/d/e/1FAIpQLScX1vA_yh5uRhqAtEUQaZr4XKNi3TOSDFKN7zIhJB8e6YKW4A/viewform"
 SOCIAL = [
     ("Amazon", "https://www.amazon.com/s?k=Castle+Bridge+Media&i=digital-text&ref=nb_sb_noss_2"),
     ("Facebook", "https://www.facebook.com/castlebridgemedia/"),
@@ -794,11 +796,14 @@ def build():
     <p class="label">What guides us</p>
     <blockquote>{esc(GUIDES)}</blockquote>
   </div>
-  <aside class="callout contact-box" id="contact">
+  <section class="contact-form" id="contact">
     <h2>Contact us</h2>
     <p>Questions, partnerships or press: we'd love to hear from you.</p>
-    <a class="button" href="mailto:{EMAIL}">Email us</a>
-  </aside>
+    <div class="form-frame">
+      <iframe src="{CONTACT_FORM}?embedded=true" title="Contact form" loading="lazy">Loading…</iframe>
+    </div>
+    <p class="meta">Prefer email? <a href="mailto:{EMAIL}">{EMAIL}</a></p>
+  </section>
   <div class="section-head"><h2>In the press</h2><span class="meta">{len(site["press"])} articles, reviews and interviews</span></div>
   <ul class="press">{press}</ul>
 </section>"""
