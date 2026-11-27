@@ -797,8 +797,6 @@ def build():
     <blockquote>{esc(GUIDES)}</blockquote>
   </div>
   <section class="contact-form" id="contact">
-    <h2>Contact us</h2>
-    <p>Questions, partnerships or press: we'd love to hear from you.</p>
     <div class="form-frame">
       <iframe src="{CONTACT_FORM}?embedded=true" title="Contact form" loading="lazy">Loading…</iframe>
     </div>
